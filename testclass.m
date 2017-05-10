@@ -1,4 +1,4 @@
-classdef testclass
+classdef testclass < handle
     %TESTCLASS Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -7,11 +7,8 @@ classdef testclass
     end
     
     methods
-        function obj = testclass()
-            x=10;
-        end
-        function ret = eval(obj, a)
-            ret = a;
+        function obj = testclass(v)
+            obj.x=v;
         end
     end
     

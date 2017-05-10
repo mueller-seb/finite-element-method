@@ -1,10 +1,11 @@
-mclassdef shapeFunction
+classdef shapeFunction < handle
     %SHAPEFUNCTION Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
         mesh
         domainID
+        %basisNodeID
         polynomial
     end
     
@@ -15,6 +16,7 @@ mclassdef shapeFunction
             if (size(nodeIDs) == n)
                 obj.mesh = mesh;
                 obj.domainID = domainID;
+                %obj.basisNodeID = basisNodeID;
                 nodes = mesh.nodes(nodeIDs);
                 X = nodes.x'; Y = nodes.y';
                 A = [ones(n, 1), X, Y];
