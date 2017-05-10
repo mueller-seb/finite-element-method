@@ -6,7 +6,7 @@ classdef node
         x
         y
         isBoundaryPoint
-        adjDomainIDs = int16.empty(0, 6)%IDs
+        adjDomainIDs = int16.empty(0, 6)
         ID
     end
     

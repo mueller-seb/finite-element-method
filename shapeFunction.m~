@@ -18,8 +18,8 @@ classdef shapeFunction < handle
                 obj.domainID = domainID;
                 %obj.basisNodeID = basisNodeID;
                 nodes = meshdata.nodes(nodeIDs);
-                X = [nodes.x]';
-                Y = [nodes.y]';
+                X = nodes(:).x';
+                Y = nodes(:).y';
                 A = [ones(n, 1), X, Y];
                 b = fixPointValues';
                 %  [x1;     [y1;

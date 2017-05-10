@@ -3,25 +3,28 @@ classdef basisFunction
     %   Detailed explanation goes here
     
     properties
-        mesh
+        meshdata
         basisNodeID
         shapeFunctions
     end
     
     methods
-        function obj = basisFunction(mesh, basisNodeID)
-            obj.mesh = mesh;
+        function obj = basisFunction(meshdata, basisNodeID)
+            obj.meshdata = meshdata;
             obj.basisNodeID = basisNodeID;
-            adjDomainIDs = mesh.nodes(basisNodeID).adjDomainIDs;
+            obj.shapeFunctions = shapeFunction.empty;
+            adjDomainIDs = meshdata.nodes(basisNodeID).adjDomainIDs;
             for i=adjDomainIDs(1:end)
-                nodeIDs = mesh.domains(i).nodeIDs;
-                fixPointValues = zeros(size(nodeIDs,1));
+                nodeIDs = meshdata.domains(i).nodeIDs;
+                fixPointValues = zeros(1, size(nodeIDs, 2));
                 fixPointValues(find(nodeIDs==basisNodeID)) = 1;
-                obj.shapeFunctions(end+1) = shapeFunction(mesh, i, nodeIDs, fixPointValues);
+                obj.shapeFunctions(end+1) = shapeFunction(meshdata, i, nodeIDs, fixPointValues);
             end
         end
-        function value = evaluate(obj, x, y)
-            
+        function val = evaluate(obj, x, y)
+            for i=obj.shapeFunctions(1:end)
+                val = val+i.evaluate(x,y);
+            end
         end            
     end
     
