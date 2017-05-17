@@ -3,12 +3,15 @@ classdef testclass < handle
     %   Detailed explanation goes here
     
     properties
-        x
+        x = int16.empty;
     end
     
     methods
         function obj = testclass(v)
             obj.x=v;
+        end
+        function ret = value()
+            ret = obj.x;
         end
     end
     

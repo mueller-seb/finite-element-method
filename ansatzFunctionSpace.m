@@ -3,17 +3,17 @@ classdef ansatzFunctionSpace
     %   Detailed explanation goes here
     
     properties
-        meshdata
-        basisFunctions
+        meshref
+        basisFunctions = basisFunction.empty;
     end
     
     methods
-        function obj = ansatzFunctionSpace(meshdata, zeroOnBoundary)
-            obj.meshdata = meshdata;
-            obj.basisFunctions = basisFunction.empty;
-            for i=obj.meshdata.nodes(1:end)
+        function obj = ansatzFunctionSpace(meshref, zeroOnBoundary)
+            obj.meshref = meshref;
+            %obj.basisFunctions = basisFunction.empty;
+            for i=obj.meshref.nodes(1:end)
                 if(~(i.isBoundaryPoint && zeroOnBoundary))
-                    obj.basisFunctions(end+1) = basisFunction(obj.meshdata, i.ID);
+                    obj.basisFunctions(end+1) = basisFunction(i);
                 end
             end          
         end

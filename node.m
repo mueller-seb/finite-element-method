@@ -1,21 +1,21 @@
-classdef node
+classdef node < handle
     %NODE Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties %(Access = public)
+    properties
         x
         y
         isBoundaryPoint
-        adjDomainIDs = int16.empty(0, 6)
+        adjDomains
         ID
     end
     
     methods
-        function obj = node(x, y, isBoundaryPoint, adjDomainIDs, ID)
+        function obj = node(x, y, isBoundaryPoint, adjDomains, ID)
             obj.x = x;
             obj.y = y;
             obj.isBoundaryPoint = isBoundaryPoint;
-            obj.adjDomainIDs = adjDomainIDs;
+            obj.adjDomains = adjDomains;
             obj.ID = ID;
         end
     end

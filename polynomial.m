@@ -25,6 +25,53 @@ classdef polynomial
                 end
             end
         end
+        
+        function sum = plus(obj1, obj2)
+            dim = [size(obj1.coefficients); size(obj2.coefficients)];
+            sumCoefficients = zeros(max(dim));
+            sumCoefficients(1:dim(1,1), 1:dim(1,2)) = obj1.coefficients;
+            sumCoefficients(1:dim(2,1), 1:dim(2,2)) = sumCoefficients(1:dim(2,1), 1:dim(2,2)) + obj2.coefficients;
+            sum = polynomial(sumCoefficients);
+        end
+        
+        function difference = minus(obj1, obj2)
+            subtrahend = polynomial(-obj2.coefficients);
+            difference = plus(obj1, subtrahend);
+        end
+        
+        function derivation = deriveX(obj)
+            degX = size(obj.coefficients, 1);
+            if (degX > 1)
+                derivation = polynomial(obj.coefficients(2:end, :) .* (1:degX-1)');
+            else
+                derivation = polynomial(0);
+            end
+        end
+        
+        function derivation = deriveY(obj)
+            degY = size(obj.coefficients, 2);
+            if (degY > 1)
+                derivation = polynomial(obj.coefficients(:, 2:end) .* (1:degY-1));
+            else
+                derivation = polynomial(0);
+            end            
+        end
+        
+        function grad = gradient(obj)
+            grad = polynomialVector(obj.deriveX, obj.deriveY);
+        end
+                
+        function divgrad = laplace(obj)
+            divgrad = divergence(gradient(obj));
+        end
+        
+        function integral = integrateX(obj, xMin, xMax)
+               
+        end
+        
+        function integral = integrateY(obj, yMin, yMax)
+            
+        end
     end
     
 end

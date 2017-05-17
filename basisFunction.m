@@ -3,27 +3,28 @@ classdef basisFunction
     %   Detailed explanation goes here
     
     properties
-        meshdata
-        basisNodeID
-        shapeFunctions
+        %meshdata
+        basisNode
+        shapeFunctions = shapeFunction.empty;
     end
     
     methods
-        function obj = basisFunction(meshdata, basisNodeID)
-            obj.meshdata = meshdata;
-            obj.basisNodeID = basisNodeID;
-            obj.shapeFunctions = shapeFunction.empty;
-            adjDomainIDs = meshdata.nodes(basisNodeID).adjDomainIDs;
-            for i=adjDomainIDs(1:end)
-                nodeIDs = meshdata.domains(i).nodeIDs;
-                fixPointValues = zeros(1, size(nodeIDs, 2));
-                fixPointValues(find(nodeIDs==basisNodeID)) = 1;
-                obj.shapeFunctions(end+1) = shapeFunction(meshdata, i, nodeIDs, fixPointValues);
+        function obj = basisFunction(basisNode)
+            %obj.meshdata = meshdata;
+            obj.basisNode = basisNode;
+            %obj.shapeFunctions = shapeFunction.empty;
+            adjDomains = basisNode.adjDomains;
+            for domain = adjDomains(1:end)
+                %nodes = meshdata.domains(i).nodeIDs;
+                nodes = domain.nodes;
+                fixPointValues = zeros(1, size(nodes, 2));
+                fixPointValues(find(nodes == basisNode)) = 1;
+                obj.shapeFunctions(end+1) = shapeFunction(domain, nodes, fixPointValues);
             end
         end
-        function val = evaluate(obj, x, y)
-            for i=obj.shapeFunctions(1:end)
-                val = val+i.evaluate(x,y);
+        function value = evaluate(obj, x, y)
+            for i = obj.shapeFunctions(1:end)
+                value = value+i.evaluate(x,y);
             end
         end            
     end

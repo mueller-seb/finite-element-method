@@ -3,23 +3,23 @@ classdef shapeFunction < handle
     %   Detailed explanation goes here
     
     properties
-        meshdata
-        domainID
-        %basisNodeID
+        %meshref
+        domain
+        %basisNode
         polynomial
     end
     
     methods
-        function obj = shapeFunction(meshdata, domainID, nodeIDs, fixPointValues)
+        function obj = shapeFunction(domain, fixPoints, fixPointValues)
             %nodeIDs = mesh.domains(domainID).nodeIDs;
             n = size(fixPointValues, 2); %3=linear, 4=bilinear, 6=quadratic
-            if (size(nodeIDs, 2) == n)
-                obj.meshdata = meshdata;
-                obj.domainID = domainID;
+            if (size(fixPoints, 2) == n)
+                %obj.meshref = meshref;
+                obj.domain = domain;
                 %obj.basisNodeID = basisNodeID;
-                nodes = meshdata.nodes(nodeIDs);
-                X = [nodes.x]';
-                Y = [nodes.y]';
+                %nodes = meshdata.nodes(nodeIDs);
+                X = [fixPoints.x]';
+                Y = [fixPoints.y]';
                 A = [ones(n, 1), X, Y];
                 b = fixPointValues';
                 %  [x1;     [y1;
@@ -59,11 +59,11 @@ classdef shapeFunction < handle
                 obj.polynomial = polynomial(coeff);
            end
         end
-        function val = evaluate(obj, x, y)
-            if obj.meshdata.domains(obj.domainID).contains(x,y)
-                val = obj.polynomial.evaluate(x,y);
+        function value = evaluate(obj, x, y)
+            if obj.domain.contains(x, y) %obj.meshref.domains(obj.domainID).contains(x,y)
+                value = obj.polynomial.evaluate(x,y);
             else
-                val = 0;
+                value = 0;
             end
         end
     end
