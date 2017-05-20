@@ -3,15 +3,23 @@ classdef testclass < handle
     %   Detailed explanation goes here
     
     properties
-        x = int16.empty;
+        x
+        y
+        n
     end
     
     methods
-        function obj = testclass(v)
-            obj.x=v;
+        function obj = testclass(x,y)
+            obj.x = x;
+            %obj.y = y;
+            obj.n = nargin;
         end
-        function ret = value()
+        function ret = value(obj)
             ret = obj.x;
+        end
+        
+        function ret = abc(a)
+            ret = a;
         end
     end
     

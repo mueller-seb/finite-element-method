@@ -1,4 +1,4 @@
-classdef polynomial
+classdef polynomial < handle
     %POLYNOMIAL Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -19,6 +19,7 @@ classdef polynomial
         end
         
         function value = evaluate(obj, x, y)
+            value = 0;
             for i=1:size(obj.coefficients, 1)
                 for j=1:size(obj.coefficients, 2)
                     value = value + obj.coefficients(i,j)*x^(i-1)*y^(j-1);
