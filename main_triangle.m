@@ -2,7 +2,7 @@ clc
 clear variables
 close all
 
-intervals = 2;
+intervals = 3;
 neumann = 1;
 
 M = triangleMesh(intervals)
@@ -23,10 +23,10 @@ for i=1:n
                     nodes = shapeFun_i.domain.nodes;
                     gradShapeFun_j = shapeFun_j.gradient;
                     fun = @(x,y) dot(gradShapeFun_i.evaluate(x,y), gradShapeFun_j.evaluate(x,y)); %scalar product of gradients
-                    a_ij = a_ij + integral2(fun, min([nodes.x]), max([nodes.x]), min([nodes.y]), max([nodes.y]));
+                    a_ij = a_ij + integralTriangle(fun, nodes);
                 end
             end
         end
-        A(i,j) = a_ij;
+        A(i,j) = a_ij
     end
 end
