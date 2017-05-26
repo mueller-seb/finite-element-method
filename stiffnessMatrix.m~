@@ -1,32 +1,29 @@
-clc
-clear variables
-close all
+function [ A_h ] = stiffnessMatrix( fun, mesh, funSpace )
+%STIFFNESSMATRIX assembles stiffness matrix A_h
+%   Detailed explanation goes here
 
-intervals = 3;
-neumann = 1;
-
-M = triangleMesh(intervals)
-S = ansatzFunctionSpace(M, neumann)
-
-n = size(S.basisFunctions, 2);
-A = zeros(n)
+n = size(funSpace.basisFunctions, 2);
+A_h = zeros(n);
 
 for i=1:n
     for j=1:n
         phi_i = S.basisFunctions(i);
         phi_j = S.basisFunctions(j);
         a_ij = 0;
-        for shapeFun_i = S.basisFunctions(i).shapeFunctions(1:end)
+        for shapeFun_i = phi_i.shapeFunctions(1:end)
             gradShapeFun_i = shapeFun_i.gradient;
-            for shapeFun_j = S.basisFunctions(j).shapeFunctions(1:end)
+            for shapeFun_j = phi_j.shapeFunctions(1:end)
                 if (shapeFun_i.domain == shapeFun_j.domain)
                     nodes = shapeFun_i.domain.nodes;
                     gradShapeFun_j = shapeFun_j.gradient;
                     fun = @(x,y) dot(gradShapeFun_i.evaluate(x,y), gradShapeFun_j.evaluate(x,y)); %scalar product of gradients
-                    a_ij = a_ij + integralTriangle(fun, nodes);
+                    a_ij = a_ij + gaussQuad(fun, nodes);
                 end
             end
         end
-        A(i,j) = a_ij
+        A_h(i,j) = a_ij;
     end
 end
+
+end
+

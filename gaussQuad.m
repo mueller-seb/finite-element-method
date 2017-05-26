@@ -1,7 +1,9 @@
-function [ value ] = integralTriangle( fun, nodes )
-%INTEGRALTRIANGLE Summary of this function goes here
-%   Detailed explanation goes here
+function [ value ] = gaussQuad( fun, nodes )
+%GAUSSQUAD Gaussian quadrature for triangles by double transformation
+%   Standard rectangle is first transformated to standard triangle and then
+%   to the individual triangle
 
+%Gaussian quadrature points x and weights w
 xw = [-sqrt(3/5), 5/9;
       0, 8/9;
       sqrt(3/5), 5/9];
@@ -27,18 +29,12 @@ Y = [nodes.y]';
     
     function x = P(xi, eta)
         N = shapeN(xi, eta);
-        x=0;
-        for i = 1:3
-            x = x + X(i)*N(i);
-        end
+        x = N*X;
     end
 
     function y = Q(xi, eta)
         N = shapeN(xi, eta);
-        y=0;
-        for i = 1:3
-            y = y + Y(i)*N(i);
-        end
+        y= N*Y;
     end
         
 
@@ -54,9 +50,7 @@ for i=1:size(xw, 1)
     end
 end
     
-    value = sum;   
-        
-
+value = sum;
 
 end
 

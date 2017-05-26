@@ -12,5 +12,4 @@ BVP2
     Omega = [0,1]^2
 
 #HowTo
-Make sure, that all files are in the same folder.
-Run main_[domain]_[BVP].m
+Run main_[domain]_[BVP]
