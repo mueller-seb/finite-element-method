@@ -1,7 +1,7 @@
 function [ A_h ] = stiffnessMatrix( funSpace, bvp )
 %STIFFNESSMATRIX assembles stiffness matrix A_h
 %   Detailed explanation goes here
-
+N = 4;
 n = size(funSpace.basisFunctions, 2);
 A_h = zeros(n);
 
@@ -18,8 +18,10 @@ for i=1:n
                     gradShapeFun_j = shapeFun_j.gradient;
                     if (bvp == 1)
                         fun = @(x,y) dot(gradShapeFun_i.evaluate(x,y), gradShapeFun_j.evaluate(x,y)); %scalar product of gradients
+                    elseif (bvp == 2)
+                        fun = @(x,y) dot(gradShapeFun_i.evaluate(x,y), gradShapeFun_j.evaluate(x,y)) + (shapeFun_i.evaluate(x,y)*shapeFun_j.evaluate(x,y));
                     end
-                    a_ij = a_ij + gaussQuad(fun, nodes);
+                    a_ij = a_ij + fastTriGaussQuad(fun, nodes, N);
                 end
             end
         end

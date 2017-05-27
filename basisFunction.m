@@ -1,9 +1,9 @@
 classdef basisFunction
-    %BASISFUNCTION Summary of this class goes here
-    %   Detailed explanation goes here
+    %BASISFUNCTION Creates basis function phi outgoing from a basis node 
+    %   Assembles several shape functions (one for each adjacent domain) to
+    %   one basis function
     
     properties
-
         basisNode
         shapeFunctions = shapeFunction.empty;
     end

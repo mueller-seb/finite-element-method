@@ -1,12 +1,10 @@
-function [ value ] = gaussQuad( fun, nodes )
+function [ value ] = triGaussQuad( fun, nodes, N )
 %GAUSSQUAD Gaussian quadrature for triangles by double transformation
 %   Standard rectangle is first transformated to standard triangle and then
 %   to the individual triangle
 
-%Gaussian quadrature points x and weights w
-xw = [-sqrt(3/5), 5/9;
-      0, 8/9;
-      sqrt(3/5), 5/9];
+%N Gaussian quadrature points x and weights w
+xw = GaussPoints(N);
 
 X = [nodes.x]';
 Y = [nodes.y]';
