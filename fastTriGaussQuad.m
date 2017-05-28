@@ -1,5 +1,6 @@
 function [ z ] = fastTriGaussQuad( fun, nodes, N )
-%FASTTRIGAUSSQUAD Summary of this function goes here
+%FASTTRIGAUSSQUAD SYMMETRICAL Gaussian quadrature on general triangle
+%elements. 
 %   Detailed explanation goes here
 
 X = [nodes.x]';
