@@ -1,16 +1,36 @@
-%FEM for right boundary value problem
+%FEM FOR TWO DIFFERENT BOUNDARY VALUE PROBLEMS
+
+%Left boundary value problem, called BVP 1
+%   -laplace(u) = sin(pi*x)*sin(pi*y) in Omega
+%     u = 0 on boundary of Omega (Dirichlet condition)
+%     Omega = [0,1]^2
+
+%Right boundary value problem, calles BVP 2
 %    -laplace(u)+u = cos(pi*x)*cos(pi*x) in Omega
-%    partial_n(u) = 0 on boundary of Omega (Neumann condition)
+%     partial_n(u) = 0 on boundary of Omega (Neumann condition)
 %     Omega = [0,1]^2
 %Further mathematical description of the problem in Remark 3.27 (Neumann boundary conditions)
+
 startup;
-bvp = 2;
+
+%1 for BVP1, 2 for BVP2
+bvp = 1;
+
+%1 for triangle elements, 2 for square elements
+quadriliteral = 1;
+
+%
+meshSubIntervals = 10;
+
+
+
 
 %Create mesh
-Mesh = triangleMesh(10);
+if (
+Mesh = squareMesh(10);
 
 %Create ansatz function space
-ansFunSpace = ansatzFunctionSpace(Mesh, 0);
+ansFunSpace = ansatzFunctionSpace(Mesh, abs(bvp-2)); %BVC: u = 0 on boundary of Omega
 
 %Calculate stiffness matrix A_h
 A_h = stiffnessMatrix(ansFunSpace, bvp);

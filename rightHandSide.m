@@ -16,7 +16,7 @@ for i=1:n
         elseif (bvp == 2)
             fun = @(x,y) shapeFun_i.evaluate(x,y)*cos(pi*x)*cos(pi*y);
         end
-        f_i = f_i + fastTriGaussQuad(fun, nodes, N);
+        f_i = f_i + gaussQuad(fun, nodes, N);
     end
     f_h(i,1) = f_i;
 end

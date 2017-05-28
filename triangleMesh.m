@@ -5,7 +5,7 @@ classdef triangleMesh < handle
     properties
         nodes
         domains
-        edges
+        %edges
     end
     
     methods
@@ -42,7 +42,7 @@ classdef triangleMesh < handle
 %
             
             obj.domains = triangle.empty(0, 2*n*n);
-            obj.edges = edge.empty(0, 3*n^2+2*n);
+            %obj.edges = edge.empty(0, 3*n^2+2*n);
             domainIndex = 1;
             for j = 1:n %going through nodes, creating |\ domains (two vertices bottom, one vertice top, hypotenuse right)
                 for i=1:n

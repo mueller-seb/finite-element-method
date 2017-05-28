@@ -7,7 +7,7 @@ X = [nodes.x]';
 Y = [nodes.y]';
 xw = TriGaussPoints(N);  % get quadrature points and weights 
 
-% calculate the area of the triangle
+% Determinant of Jacobian = area of the triangle
 A=abs(X(1)*(Y(2)-Y(3))+X(2)*(Y(3)-Y(1))+X(3)*(Y(1)-Y(2)))/2.0;
 
 % find number of Gauss points
