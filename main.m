@@ -13,7 +13,7 @@
 startup;
 %--------BEGIN OF PARAMETRIZATION AREA------------------
 %1 for BVP1, 2 for BVP2
-bvp = 1;
+bvp = 2;
 %
 %1 for triangle elements, 2 for square elements
 elementType = 1;
@@ -43,12 +43,12 @@ ansFunSpace = ansatzFunctionSpace(Mesh, abs(bvp-2)); %BVC: u = 0 on boundary of 
 disp(['Finished creating ansatz Function space']);
 
 %Calculate stiffness matrix A_h
-disp(['Calculating stiffness matrix...']);
+disp(['Calculating stiffness matrix for BVP #' num2str(bvp) '...']);
 A_h = stiffnessMatrix(ansFunSpace, bvp);
 disp(['Finished calculating stiffness matrix']);
 
 %Calculate right hand side f_h
-disp(['Calculating right hand side...']);
+disp(['Calculating right hand side for BVP #' num2str(bvp) '...']);
 f_h = rightHandSide(ansFunSpace, bvp);
 disp(['Finished calculating right hand side.']);
 
@@ -58,10 +58,15 @@ u_h = A_h\f_h;
 disp(['Finished solving the equation system']);
 
 %Calculate matrix of approximated discrete solution
-disp(['Calculating matrix with discrete solution...']);
+disp(['Calculating matrix with discrete solution for ' num2str(evalSubIntervals) ' subintervals...']);
 u = solution(ansFunSpace, u_h);
 U = u.discreteSolution(evalSubIntervals);
 disp(['Finished calculating matrix with discrete solution.']);
+
+Uref = exactSolution(bvp, evalSubIntervals);
+p = 2;
+n = evalSubIntervals+1;
+absErrorLp = norm(U(:,:,3)-Uref(:,:,3), p)*(1/n^2)^(1/p); %absolute error in Lp-norm
 
 figure;
 surf(U(:,:,1), U(:,:,2), U(:,:,3));
