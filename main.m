@@ -5,7 +5,7 @@
 %     u = 0 on boundary of Omega (Dirichlet condition)
 %     Omega = [0,1]^2
 
-%Right boundary value problem, calles BVP 2
+%Right boundary value problem, called BVP 2
 %    -laplace(u)+u = cos(pi*x)*cos(pi*x) in Omega
 %     partial_n(u) = 0 on boundary of Omega (Neumann condition)
 %     Omega = [0,1]^2
@@ -29,26 +29,39 @@ evalSubIntervals = 20;
 
 %Create mesh
 if (elementType == 1)
+    disp(['Creating triangle mesh with ' num2str(meshSubIntervals) ' subintervals...']);
     Mesh = triangleMesh(meshSubIntervals);
 elseif (elementType == 2)
+    disp(['Creating square mesh with ' num2str(meshSubIntervals) ' subintervals...']);
     Mesh = squareMesh(meshSubIntervals);
 end
+disp(['Finished creating mesh']);
 
 %Create ansatz function space
+disp(['Creating ansatz function space...']);
 ansFunSpace = ansatzFunctionSpace(Mesh, abs(bvp-2)); %BVC: u = 0 on boundary of Omega
+disp(['Finished creating ansatz Function space']);
 
 %Calculate stiffness matrix A_h
+disp(['Calculating stiffness matrix...']);
 A_h = stiffnessMatrix(ansFunSpace, bvp);
+disp(['Finished calculating stiffness matrix']);
 
 %Calculate right hand side f_h
+disp(['Calculating right hand side...']);
 f_h = rightHandSide(ansFunSpace, bvp);
+disp(['Finished calculating right hand side.']);
 
 %Calculate coefficients u_h for approximated solution of u ("ansatz")
+disp(['Solving the equation system...']);
 u_h = A_h\f_h;
+disp(['Finished solving the equation system']);
 
 %Calculate matrix of approximated discrete solution
+disp(['Calculating matrix with discrete solution...']);
 u = solution(ansFunSpace, u_h);
 U = u.discreteSolution(evalSubIntervals);
+disp(['Finished calculating matrix with discrete solution.']);
 
 figure;
 surf(U(:,:,1), U(:,:,2), U(:,:,3));

@@ -10,40 +10,56 @@
 %     partial_n(u) = 0 on boundary of Omega (Neumann condition)
 %     Omega = [0,1]^2
 %Further mathematical description of the problem in Remark 3.27 (Neumann boundary conditions)
-
 startup;
-
+%--------BEGIN OF PARAMETRIZATION AREA------------------
 %1 for BVP1, 2 for BVP2
 bvp = 1;
-
-%1 for triangle elements, 2 for square elements
-quadriliteral = 1;
-
 %
+%1 for triangle elements, 2 for square elements
+elementType = 1;
+%
+%#subintervals of the generated mesh
 meshSubIntervals = 10;
-
-
+%
+%#subintervals of the discrete solution
+evalSubIntervals = 20;
+%
+%--------END OF PARAMETRIZATION AREA-------------------
 
 
 %Create mesh
-if (
-Mesh = squareMesh(10);
+if (elementType == 1)
+    disp(['Creating triangle mesh with ' num2str(meshSubIntervals) ' subintervals...']);
+    Mesh = triangleMesh(meshSubIntervals);
+elseif (elementType == 2)
+    disp(['Creating square mesh with ' num2str(meshSubIntervals) ' subintervals...']);
+    Mesh = squareMesh(meshSubIntervals);
+end
+disp(['Finished creating mesh']);
 
 %Create ansatz function space
+disp(['Creating ansatz function space...']);
 ansFunSpace = ansatzFunctionSpace(Mesh, abs(bvp-2)); %BVC: u = 0 on boundary of Omega
+disp(['Finished creating ansatz Function space']);
 
 %Calculate stiffness matrix A_h
+disp(['Calculating stiffness matrix...']);
 A_h = stiffnessMatrix(ansFunSpace, bvp);
+disp(['Finished calculating stiffness matrix']);
 
 %Calculate right hand side f_h
+disp(['Calculating right hand side...']);
 f_h = rightHandSide(ansFunSpace, bvp);
+disp(['Finished calculating right hand side.']);
 
 %Calculate coefficients u_h for approximated solution of u ("ansatz")
+disp(['Solving the equation system...']);
 u_h = A_h\f_h;
+disp(['Finished solving the equation system']);
 
 %Calculate matrix of approximated discrete solution
 u = solution(ansFunSpace, u_h);
-U = u.discreteSolution(20);
+U = u.discreteSolution(evalSubIntervals);
 
 figure;
 surf(U(:,:,1), U(:,:,2), U(:,:,3));
