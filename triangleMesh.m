@@ -5,13 +5,14 @@ classdef triangleMesh < handle
     properties
         nodes
         domains
-        %edges
+        edges
     end
     
     methods
         function obj = triangleMesh(n) %n: number of subintervals
             nodeDist = 1.0/n;
             obj.nodes = node.empty(0, (n+1)^2);
+            obj.edges = edge.empty(0, 2*n^2*3);
             nodeIndex = 1;
             for j=0:n
                 for i=0:n
@@ -42,7 +43,6 @@ classdef triangleMesh < handle
 %
             
             obj.domains = triangle.empty(0, 2*n*n);
-            %obj.edges = edge.empty(0, 3*n^2+2*n);
             domainIndex = 1;
             for j = 1:n %going through nodes, creating |\ domains (two vertices bottom, one vertice top, hypotenuse right)
                 for i=1:n
@@ -76,6 +76,14 @@ classdef triangleMesh < handle
                 end            
             end
         end
+        
+       function createEdges(obj)
+            edgeIndex = 1;
+            for domain = obj.domains(1:end)
+                obj.edges(edgeIndex:edgeIndex+2) = domain.createEdges(edgeIndex);
+                edgeIndex = edgeIndex+3;
+            end
+       end
     end
     
 end

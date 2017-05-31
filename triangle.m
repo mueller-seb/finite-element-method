@@ -4,6 +4,7 @@ classdef triangle < handle
     
     properties
         nodes = node.empty(0, 3)
+        edges = edge.empty(0, 3)
         ID
     end
     
@@ -14,6 +15,7 @@ classdef triangle < handle
                 obj.ID = ID;
             end
         end
+        
         function isInside = contains(obj, x, y)
             %calculating barycentric coordinates by solving equation system
             %v = v1 + (v2-v1)*c1 + (v3-v1)*c2 with v=[x; y] and vertices vi
@@ -31,6 +33,13 @@ classdef triangle < handle
             else
                 isInside = false;
             end            
+        end
+        
+        function edges = createEdges(obj, edgeIndex)
+            obj.edges(1) = edge(obj.nodes(1:2), edgeIndex);
+            obj.edges(2) = edge(obj.nodes(2:3), edgeIndex+1);
+            obj.edges(3) = edge([obj.nodes(3), obj.nodes(1)], edgeIndex+3);
+            edges = obj.edges;
         end
     end
     

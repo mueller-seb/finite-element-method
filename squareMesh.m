@@ -5,13 +5,14 @@ classdef squareMesh < handle
     properties
         nodes
         domains
-        %edges
+        edges
     end
     
     methods
         function obj = squareMesh(n) %n: number of subintervals
             nodeDist = 1.0/n;
             obj.nodes = node.empty(0, (n+1)^2);
+            obj.edges = edge.empty(0, 4*n^2);
             nodeIndex = 1;
             for j=0:n
                 for i=0:n
@@ -42,16 +43,15 @@ classdef squareMesh < handle
 %
             
             obj.domains = square.empty(0, n^2);
-            %obj.edges = edge.empty(0, 3*n^2+2*n);
             domainIndex = 1;
-            for j = 1:n %going through nodes, creating domains
-                for i=1:n
+            for j = 1:n %y direction (up)
+                for i=1:n %x direction (right)
                     nodeIndex = (j-1)*(n+1)+i;
                     vertices = node.empty(0, 4);
                     vertices(1) = obj.nodes(nodeIndex);
-                    vertices(2) = obj.nodes((j-1)*(n+1)+i+1);
-                    vertices(3) = obj.nodes(j*(n+1)+i+1);
-                    vertices(4) = obj.nodes(j*(n+1)+i);
+                    vertices(2) = obj.nodes(nodeIndex+1);
+                    vertices(3) = obj.nodes(nodeIndex+(n+1)+1);
+                    vertices(4) = obj.nodes(nodeIndex+(n+1));
                     obj.domains(domainIndex) = square(vertices, domainIndex);
 
                    for vertex=vertices(1:4)
@@ -61,7 +61,14 @@ classdef squareMesh < handle
                end
             end
         end
+        
+        function createEdges(obj)
+            edgeIndex = 1;
+            for domain = obj.domains(1:end)
+                obj.edges(edgeIndex:edgeIndex+3) = domain.createEdges(edgeIndex);
+                edgeIndex = edgeIndex+4;
+            end
+        end
     end
-    
 end
 

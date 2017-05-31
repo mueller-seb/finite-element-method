@@ -1,16 +1,20 @@
 %FEM FOR TWO DIFFERENT BOUNDARY VALUE PROBLEMS
-
-%Left boundary value problem, called BVP 1
+%=============================================
+%Left boundary value problem, called BVP #1
 %   -laplace(u) = sin(pi*x)*sin(pi*y) in Omega
 %     u = 0 on boundary of Omega (Dirichlet condition)
 %     Omega = [0,1]^2
+%     SOLUTION: u(x,y) = sin(pi*x)*sin(pi*x)/(2pi^2)
 
-%Right boundary value problem, called BVP 2
+%Right boundary value problem, called BVP #2
 %    -laplace(u)+u = cos(pi*x)*cos(pi*x) in Omega
 %     partial_n(u) = 0 on boundary of Omega (Neumann condition)
 %     Omega = [0,1]^2
+%     SOLUTION: u(x,y) = sin(pi*x)*sin(pi*x)/(2pi^2)
 %Further mathematical description of the problem in Remark 3.27 (Neumann boundary conditions)
+
 startup;
+
 %--------BEGIN OF PARAMETRIZATION AREA------------------
 %1 for BVP1, 2 for BVP2
 bvp = 2;
