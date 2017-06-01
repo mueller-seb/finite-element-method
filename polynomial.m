@@ -35,7 +35,7 @@ classdef polynomial < handle
             sum = polynomial(sumCoefficients);
         end
         
-        function difference = minus(obj1, obj2)
+        function difference = minus(obj1, obj2) %not used
             subtrahend = polynomial(-obj2.coefficients);
             difference = plus(obj1, subtrahend);
         end
@@ -58,21 +58,14 @@ classdef polynomial < handle
             end            
         end
         
-        function grad = gradient(obj)
+        function grad = gradient(obj) %not used
             grad = polynomialVector(obj.deriveX, obj.deriveY);
         end
                 
-        function divgrad = laplace(obj)
+        function divgrad = laplace(obj) %not used
             divgrad = divergence(gradient(obj));
         end
-        
-        function integral = integrateX(obj, xMin, xMax)
-               
-        end
-        
-        function integral = integrateY(obj, yMin, yMax)
-            
-        end
+
     end
     
 end

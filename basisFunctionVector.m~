@@ -1,0 +1,32 @@
+classdef basisFunctionVector
+    %BASISFUNCTIONVECTOR Summary of this class goes here
+    %   Detailed explanation goes here
+    
+    properties
+        shapeFunctionVectors
+    end
+    
+    methods
+        function obj = basisFunctionVector(shapeFunctionVectors)
+            obj.shapeFunctionVectors = shapeFunctionVectors;
+        end
+        
+        function value = evaluate(obj, x, y)
+            for shapeFunVec = obj.shapeFunctionVectors(1:end)
+                if (shapeFunVec.evaluate(x, y) ~= zeros(2,1))
+                    value = i.evaluate(x, y);
+                    break;
+                else
+                    value = [0; 0];
+                end
+            end
+        end
+        
+        function div = divergence(obj)
+            for shapeFunV
+            div = obj.basisFunX.deriveX + obj.basisFunY.deriveY;
+        end
+    end
+    
+end
+

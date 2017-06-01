@@ -49,8 +49,8 @@ classdef triangleMesh < handle
                     nodeIndex = (j-1)*(n+1)+i;
                     vertices = node.empty(0, 3);
                     vertices(1) = obj.nodes(nodeIndex);
-                    vertices(2) = obj.nodes((j-1)*(n+1)+i+1);
-                    vertices(3) = obj.nodes(j*(n+1)+i);
+                    vertices(2) = obj.nodes(nodeIndex+1);
+                    vertices(3) = obj.nodes(nodeIndex+(n+1));
                     obj.domains(domainIndex) = triangle(vertices, domainIndex);
 
                    for vertex=vertices(1:3)
@@ -65,8 +65,8 @@ classdef triangleMesh < handle
                     nodeIndex = (j-1)*(n+1)+i;
                     vertices = node.empty(0, 3);
                     vertices(1) = obj.nodes(nodeIndex);
-                    vertices(2) = obj.nodes(j*(n+1)+i);
-                    vertices(3) = obj.nodes(j*(n+1)+i-1);
+                    vertices(2) = obj.nodes(nodeIndex+(n+1));
+                    vertices(3) = obj.nodes(nodeIndex+(n+1)-1);
                     obj.domains(domainIndex) = triangle(vertices, domainIndex);
 
                    for vertex=vertices(1:3)

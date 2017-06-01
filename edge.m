@@ -1,10 +1,11 @@
 classdef edge < handle
-    %EDGE Summary of this class goes here
+    %EDGE Edge between two mesh points
     %   Detailed explanation goes here
     
     properties
         nodes
-        n
+        n %normal vector on the right hand side of vec(node1, node2)
+        l %length of the edge
         ID
     end
     
@@ -12,7 +13,14 @@ classdef edge < handle
         function obj = edge(nodes, ID)
             obj.nodes = nodes;
             obj.ID = ID;
+            obj.l = obj.length;
             obj.n = obj.normVec;
+        end
+        
+        function l = length(obj)
+            C = [[obj.nodes.x]; [obj.nodes.y]];
+            g = C(:,2)-C(:,1);
+            l = norm(g, 2);
         end
         
 %p1=(x1, y1); p2=(x2, y2)

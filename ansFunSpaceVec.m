@@ -1,0 +1,27 @@
+classdef ansFunSpaceVec < handle
+    %ANSFUNSPACEVEC Ansatz function space of vector fields
+    %   Detailed explanation goes here
+    
+    properties
+        Mesh
+        basisFunctionVectors = basisFunctionVector.empty
+    end
+    
+    methods
+        function obj = ansFunSpaceVec(Mesh, basisFunVecs)
+            obj.Mesh = Mesh;
+            obj.basisFunctionVectors = basisFunVecs;
+        end
+        
+        function divAnsFunSpace = divergence(obj)
+            N = size(obj.basisFunctionVectors, 2);
+            divBasisFuns = basisFunction.empty(0, N);
+            for i=1:N
+                divBasisFuns(i) = obj.basisFunctionVectors(i).divergence;
+            end
+            divAnsFunSpace = ansatzFunctionSpace(obj.Mesh, 0, divBasisFuns);            
+        end
+    end
+    
+end
+

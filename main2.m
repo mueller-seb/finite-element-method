@@ -17,16 +17,16 @@ startup;
 
 %--------BEGIN OF PARAMETRIZATION AREA------------------
 %1 for BVP1, 2 for BVP2
-bvp = 1;
+bvp = 2;
 %
 %1 for triangle elements, 2 for square elements
 elementType = 1;
 %
 %#subintervals of the generated mesh
-meshSubIntervals = 5;
+meshSubIntervals = 10;
 %
 %#subintervals of the discrete solution
-evalSubIntervals = 10;
+evalSubIntervals = 20;
 %
 %--------END OF PARAMETRIZATION AREA-------------------
 
@@ -46,9 +46,11 @@ disp(['Creating ansatz function space...']);
 ansFunSpace = ansatzFunctionSpace(Mesh, abs(bvp-2)); %BVC: u = 0 on boundary of Omega
 disp(['Finished creating ansatz Function space']);
 
+gradAnsFunSpace = ansFunSpace.gradient;
+
 %Calculate stiffness matrix A_h
 disp(['Calculating stiffness matrix for BVP #' num2str(bvp) '...']);
-A_h = stiffnessMatrix(ansFunSpace, bvp);
+A_h = stiffnessMatrix2(ansFunSpace, gradAnsFunSpace, bvp);
 disp(['Finished calculating stiffness matrix']);
 
 %Calculate right hand side f_h

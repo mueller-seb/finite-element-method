@@ -73,12 +73,7 @@ classdef basisFunction < handle
         end
         
         function gradBasisFun = gradient(obj)
-            N = size(obj.shapeFunctions, 2);
-            gradShapeFuns = shapeFunctionVector.empty(0, N);
-            for i = 1:N
-                gradShapeFuns(i) = obj.shapeFunctions(i).gradient;
-            end
-            gradBasisFun = basisFunctionVector(obj.basisNode, gradShapeFuns);
+            gradBasisFun = basisFunctionVector(obj.basisNode, obj.deriveX, obj.deriveY);
         end
         
         function divgrad = laplace(obj)

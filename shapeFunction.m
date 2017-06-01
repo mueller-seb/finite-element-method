@@ -21,11 +21,32 @@ classdef shapeFunction < handle
             end
         end
         
-        function shapeGrad = gradient(obj)
-            polyGrad = obj.polynomial.gradient;
-            shapeGradX = shapeFunction(obj.domain, polyGrad.polynomialX);
-            shapeGradY = shapeFunction(obj.domain, polyGrad.polynomialY);
-            shapeGrad = shapeFunctionVector(shapeGradX, shapeGradY);
+        function sum = plus(obj1, obj2)
+            if (obj1.domain == obj2.domain)
+                sum = shapeFunction(obj1.domain, (obj1.polynomial + obj2.polynomial));
+            else
+                sum = [obj1, obj2];
+            end
+        end
+        
+        function derivation = deriveX(obj)
+            derivation = shapeFunction(obj.domain, obj.polynomial.deriveX);
+        end
+        
+        function derivation = deriveY(obj)
+            derivation = shapeFunction(obj.domain, obj.polynomial.deriveY);
+        end
+        
+        function grad = gradient(obj)
+            %polyGrad = obj.polynomial.gradient;
+            %shapeGradX = shapeFunction(obj.domain, polyGrad.polynomialX);
+            %shapeGradY = shapeFunction(obj.domain, polyGrad.polynomialY);
+            %shapeGrad = shapeFunctionVector(shapeGradX, shapeGradY);
+            grad = shapeFunctionVector(obj.deriveX, obj.deriveY);
+        end
+        
+        function divgrad = laplace(obj)
+            divgrad = obj.gradient.divergence;            
         end
     end
     
