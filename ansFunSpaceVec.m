@@ -1,6 +1,6 @@
 classdef ansFunSpaceVec < handle
-    %ANSFUNSPACEVEC Ansatz function space of vector fields
-    %   Detailed explanation goes here
+    %ANSFUNSPACEVEC Vectorial basis of ansatz functions
+    %   Used for gradients of basis functions of ansatz function space
     
     properties
         Mesh

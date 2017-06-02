@@ -35,6 +35,14 @@ classdef triangle < handle
             end            
         end
         
+        function diam = diameter(obj)
+        %formula from http://www.mathopenref.com/trianglecircumcircle.html
+            a = obj.edges(1).length;
+            b = obj.edges(2).length;
+            c = obj.edges(3).length;
+            diam = (a*b*c)/sqrt((a+b+c)*(b+c-a)*(c+a-b)*(a+b-c));
+        end
+        
         function edges = createEdges(obj, edgeIndex)
             obj.edges(1) = edge(obj.nodes(1:2), edgeIndex);
             obj.edges(2) = edge(obj.nodes(2:3), edgeIndex+1);

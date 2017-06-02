@@ -1,4 +1,4 @@
-classdef solution < handle
+classdef solution
     %SOLUTION Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -36,19 +36,16 @@ classdef solution < handle
             U3D = cat(3, X, Y, U);
         end
         
-        function solutionShapeFun = shapeFunction(obj, domain) %returns assembled shape function of the solution on a single domain (for efficiency in a posteriori est.)
-            solutionShapeFun = shapeFunction(domain, polynomial(0));
-            i=1;
+        function shapeFunRet = shapeFunction(domain) %returns assembled shape function of the solution on a single domain (for a posteriori est.)
+            shapeFunRet = shapeFunction(domain, 0);
             for basisFun = obj.ansatzFunctionSpace.basisFunctions(1:end)
-                for shapeFun = basisFun.shapeFunctions(1:end)
+                for shapeFun = basisFunction.shapeFunctions(1:end)
                     if (shapeFun.domain == domain)
-                        solutionShapeFun = solutionShapeFun + shapeFun.scale(obj.u_h(i));
+                        shapeFunRet = shapeFunRet 
                     end
                 end
-                i = i+1;
             end
-        end
-        
-    end    
+    end
+    
 end
 

@@ -26,6 +26,10 @@ classdef square < handle
             end            
         end
         
+        function diam = diameter(obj)
+            diam = sqrt(obj.edges(1).length^2+obj.edges(2).length^2);
+        end
+        
         function edges = createEdges(obj, edgeIndex)
             obj.edges(1) = edge(obj.nodes(1:2), edgeIndex);
             obj.edges(2) = edge(obj.nodes(2:3), edgeIndex+1);

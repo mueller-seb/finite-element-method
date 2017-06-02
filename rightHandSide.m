@@ -1,8 +1,7 @@
-function [ f_h ] = rightHandSide( funSpace, bvp )
-%RIGHTHANDSIDE Summary of this function goes here
+function [ f_h ] = rightHandSide( N, funSpace, bvp )
+%RIGHTHANDSIDE Calculates right hand side vector f_h
 %   Detailed explanation goes here
 
-N = 4;
 n = size(funSpace.basisFunctions, 2);
 f_h = zeros(n, 1);
 

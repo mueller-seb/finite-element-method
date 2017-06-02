@@ -1,7 +1,11 @@
 function [ z ] = fastTriGaussQuad( fun, nodes, N )
 %FASTTRIGAUSSQUAD SYMMETRICAL Gaussian quadrature on general triangle
 %elements. 
-%   Detailed explanation goes here
+%   N is order of Gauss quadrature, not the number of weight points Ng
+
+% procedure is from http://math2.uncc.edu/~shaodeng/TEACHING/math5172/Lectures/Lect_15.PDF
+% but one can also use my own, non symmetrical implementation in
+% triGaussQuad.m instead
 
 X = [nodes.x]';
 Y = [nodes.y]';

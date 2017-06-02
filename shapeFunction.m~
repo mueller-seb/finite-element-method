@@ -30,9 +30,8 @@ classdef shapeFunction < handle
         end
         
         function scaling = scale(obj, factor)
-            scaling = shapeFunction(obj.domain, scale(obj.polynomial, factor));
+            scaling = 
         end
-        
         function derivation = deriveX(obj)
             derivation = shapeFunction(obj.domain, obj.polynomial.deriveX);
         end

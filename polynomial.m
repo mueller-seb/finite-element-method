@@ -40,6 +40,10 @@ classdef polynomial < handle
             difference = plus(obj1, subtrahend);
         end
         
+        function scaling = scale(obj, factor)
+            scaling = polynomial(factor*obj.coefficients);
+        end
+        
         function derivation = deriveX(obj)
             degX = size(obj.coefficients, 1);
             if (degX > 1)

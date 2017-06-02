@@ -4,7 +4,7 @@ classdef basisFunction < handle
     %   one basis function
     
     properties
-        basisNode
+        basisNode = node.empty(0, 1);
         shapeFunctions = shapeFunction.empty;
     end
     
@@ -29,13 +29,9 @@ classdef basisFunction < handle
         end
         
         function value = evaluate(obj, x, y)
-            %value = 0;
-            %for i = obj.shapeFunctions(1:end)
-            %    value = value+i.evaluate(x,y);
-            %end
-            for i = obj.shapeFunctions(1:end)
-                if (i.evaluate(x, y) ~= 0)
-                    value = i.evaluate(x, y);
+            for shapeFun = obj.shapeFunctions(1:end)
+                if (shapeFun.evaluate(x, y) ~= 0)
+                    value = shapeFun.evaluate(x, y);
                     break;
                 else
                     value = 0;
@@ -57,16 +53,18 @@ classdef basisFunction < handle
         end
         
         function derivation = deriveX(obj)
-            derivedShapeFuns = shapeFunction.empty(0, size(obj.shapeFunctions, 2));
-            for i = 1:size(obj.shapeFunctions, 2)
+            N = size(obj.shapeFunctions, 2);
+            derivedShapeFuns = shapeFunction.empty(0, N);
+            for i = 1:N
                 derivedShapeFuns(i) = obj.shapeFunctions(i).deriveX;
             end
             derivation = basisFunction(obj.basisNode, derivedShapeFuns);
         end
         
         function derivation = deriveY(obj)
-            derivedShapeFuns = shapeFunction.empty(0, size(obj.shapeFunctions, 2));
-            for i = 1:size(obj.shapeFunctions, 2)
+            N = size(obj.shapeFunctions, 2);
+            derivedShapeFuns = shapeFunction.empty(0, N);
+            for i = 1:N
                 derivedShapeFuns(i) = obj.shapeFunctions(i).deriveY;
             end
             derivation = basisFunction(obj.basisNode, derivedShapeFuns);

@@ -1,18 +1,18 @@
 classdef shapeFunctionVector < handle
-    %SHAPEFUNCTIONVECTOR Summary of this class goes here
+    %SHAPEFUNCTIONVECTOR Vector of shape functions
     %   Detailed explanation goes here
     
     properties
-        shapeFunX
-        shapeFunY
+        shapeFunX = shapeFunction.empty(0, 1);
+        shapeFunY = shapeFunction.empty(0, 1);
         domain
     end
     
     methods
         function obj = shapeFunctionVector(shapeFunX, shapeFunY)
-            obj.shapeFunX = shapeFunX;
-            obj.shapeFunY = shapeFunY;
             if (shapeFunX.domain == shapeFunY.domain)
+                obj.shapeFunX = shapeFunX;
+                obj.shapeFunY = shapeFunY;
                 obj.domain = shapeFunX.domain;
             end
         end

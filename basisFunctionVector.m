@@ -1,10 +1,10 @@
-classdef basisFunctionVector
+classdef basisFunctionVector < handle
     %BASISFUNCTIONVECTOR Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
-        basisNode
-        shapeFunctionVectors
+        basisNode = node.empty(0, 1);
+        shapeFunctionVectors = shapeFunctionVector.empty;
     end
     
     methods
@@ -26,7 +26,7 @@ classdef basisFunctionVector
         
         function div = divergence(obj)
             N = size(obj.shapeFunctionVectors, 2);
-            divShapeFunVec = basisFunction.empty(0, N);
+            divShapeFunVec = shapeFunction.empty(0, N);
             for i = 1:N
                 divShapeFunVec(i) = obj.shapeFunctionVectors(i).shapeFunX.deriveX + obj.shapeFunctionVectors(i).shapeFunY.deriveY;
             end

@@ -1,5 +1,5 @@
 classdef ansatzFunctionSpace < handle
-    %ANSATZFUNCTIONSPACE Creates basis for ansatz functions
+    %ANSATZFUNCTIONSPACE Basis of ansatz functions
     %   Detailed explanation goes here
     
     properties
@@ -10,7 +10,6 @@ classdef ansatzFunctionSpace < handle
     methods
         function obj = ansatzFunctionSpace(Mesh, zeroOnBoundary, basisFunctions)
             obj.Mesh = Mesh;
-            %obj.basisFunctions = basisFunction.empty(0, size(Mesh.nodes, 2));
             if (nargin == 2)
                 for i=obj.Mesh.nodes(1:end)
                     if(~(i.isBoundaryPoint && zeroOnBoundary))
