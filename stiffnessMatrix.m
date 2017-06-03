@@ -1,11 +1,12 @@
-function [ A_h ] = stiffnessMatrix( N, bvp, ansFunSpace, gradAnsFunSpace )
+function [ A_h ] = stiffnessMatrix( gaussOrder, ansFunSpace, gradAnsFunSpace )
 %STIFFNESSMATRIX Assembles stiffness matrix A_h
 %   Detailed explanation goes here
 
 n = size(gradAnsFunSpace.basisFunctionVectors, 2);
 A_h = zeros(n);
+bvp = ansFunSpace.bvp;
 
-if (nargin == 4) %gradients of ansatz function space already calculated (less CPU-intensive, more memory intensive)
+if (nargin == 3) %gradients of ansatz function space are given (less CPU-intensive, more memory intensive)
 
 for i=1:n
     for j=1:n
@@ -27,7 +28,7 @@ for i=1:n
                         shapeFun_j = ansFunSpace.basisFunctions(j).shapeFunctions(l);
                         fun = @(x,y) dot(gradShapeFun_i.evaluate(x,y), gradShapeFun_j.evaluate(x,y)) + (shapeFun_i.evaluate(x,y)*shapeFun_j.evaluate(x,y));
                     end
-                    a_ij = a_ij + gaussQuad(fun, nodes, N);
+                    a_ij = a_ij + gaussQuad(fun, nodes, gaussOrder);
                 end
             end
         end
@@ -35,7 +36,7 @@ for i=1:n
     end
 end
 
-elseif (nargin == 3) %gradients of ansatz function space not calculeted yet (more CPU-intensive, less memory intensive)
+elseif (nargin == 2) %gradients of ansatz function space not given (more CPU-intensive, less memory intensive)
     
 for i=1:n
     for j=1:n
@@ -53,7 +54,7 @@ for i=1:n
                     elseif (bvp == 2)
                         fun = @(x,y) dot(gradShapeFun_i.evaluate(x,y), gradShapeFun_j.evaluate(x,y)) + (shapeFun_i.evaluate(x,y)*shapeFun_j.evaluate(x,y));
                     end
-                    a_ij = a_ij + gaussQuad(fun, nodes, N);
+                    a_ij = a_ij + gaussQuad(fun, nodes, gaussOrder);
                 end
             end
         end

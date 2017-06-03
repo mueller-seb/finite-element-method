@@ -4,15 +4,17 @@ classdef ansatzFunctionSpace < handle
     
     properties
         Mesh
+        bvp
         basisFunctions = basisFunction.empty;
     end
     
     methods
-        function obj = ansatzFunctionSpace(Mesh, zeroOnBoundary, basisFunctions)
+        function obj = ansatzFunctionSpace(Mesh, bvp, basisFunctions)
             obj.Mesh = Mesh;
+            obj.bvp = bvp;
             if (nargin == 2)
                 for i=obj.Mesh.nodes(1:end)
-                    if(~(i.isBoundaryPoint && zeroOnBoundary))
+                    if(~(i.isBoundaryPoint && (bvp == 1)))
                         obj.basisFunctions(end+1) = basisFunction(i);
                     end
                 end

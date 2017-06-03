@@ -16,90 +16,96 @@
 startup;
 
 %--------BEGIN OF PARAMETRIZATION AREA------------------
-%1 for BVP1, 2 for BVP2
-bvp = 1;
+%Choose boundary value problem. 1 for BVP #1, 2 for BVP #2.
+bvp = 2;
 %
-%1 for triangle elements, 2 for square elements
+Omega = [0, 1; 0, 1]; %xMin, xMax; yMin, yMax
+%
+%Finite element type. 1 for rectangular triangle elements, 2 for square elements, 3 for arbitrary triangle elements
 elementType = 1;
 %
-%#subintervals of the generated mesh
-meshSubIntervals = 10;
+%#Subintervals of the generated rectangular triangle (1) and square (2) meshes. [x intervals, y intervals]
+meshSubIntervals = [10, 10];
 %
-%#subintervals of the discrete solution
-evalSubIntervals = 10;
+%#Subintervals of the discrete solution. [x intervals, y intervals]
+evalSubIntervals = [10, 10]; %evalSubIntervals = meshSubIntervals very fast
 %
-%order of Gaussian quadrature for stiffness matrix
+%Order of Gaussian quadrature for stiffness matrix
 gaussOrderA_h = 3;
-%order of Gaussian quadrature for right hand side
+%Order of Gaussian quadrature for right hand side
 gaussOrderF_h = 4;
 %--------END OF PARAMETRIZATION AREA-------------------
 
 tic
 %Create mesh
 if (elementType == 1)
-    disp(['Creating triangle mesh with ' num2str(meshSubIntervals) ' subintervals...']);
-    Mesh = triangleMesh(meshSubIntervals);
+    disp(['Creating mesh of rectangular triangle elements with ' num2str(meshSubIntervals) ' subintervals...']);
+    Mesh = rectTriangleMesh(meshSubIntervals, Omega);
 elseif (elementType == 2)
-    disp(['Creating square mesh with ' num2str(meshSubIntervals) ' subintervals...']);
-    Mesh = squareMesh(meshSubIntervals);
+    disp(['Creating mesh of squares with ' num2str(meshSubIntervals) ' subintervals...']);
+    Mesh = squareMesh(meshSubIntervals, Omega);
+elseif (elementType == 3)
+    arbTriangles_PDE; %generates meshdata
+    Mesh = arbTriangleMesh(meshdata);
 end
-disp(['Finished creating mesh']);
+disp('Finished creating mesh.');
 toc
 
 tic
 %Create ansatz function space
-disp(['Creating ansatz function space...']);
-ansFunSpace = ansatzFunctionSpace(Mesh, abs(bvp-2)); %BVC: u = 0 on boundary of Omega
-disp(['Finished creating ansatz Function space']);
+disp('Creating ansatz function space...');
+ansFunSpace = ansatzFunctionSpace(Mesh, bvp);
+disp('Finished creating ansatz Function space.');
 toc
 
 tic
 %Create gradients of ansatz function space
-disp(['Creating ansatz function space gradients...']);
+disp('Creating ansatz function space gradients...');
 gradAnsFunSpace = ansFunSpace.gradient;
-disp(['Finished creating ansatz Function space gradients']);
+%laplaceAnsFunSpace = gradAnsFunSpace.divergence;
+disp('Finished creating ansatz Function space gradients.');
 toc
 
 tic
 %Calculate stiffness matrix A_h
 disp(['Calculating stiffness matrix for BVP #' num2str(bvp) '...']);
-A_h = stiffnessMatrix(gaussOrderA_h, bvp, ansFunSpace, gradAnsFunSpace);
+A_h = stiffnessMatrix(gaussOrderA_h, ansFunSpace, gradAnsFunSpace);
 %A_h = stiffnessMatrix(gaussOrderA_h, bvp, ansFunSpace);
-disp(['Finished calculating stiffness matrix']);
+disp('Finished calculating stiffness matrix.');
 toc
 
 tic
 %Calculate right hand side f_h
 disp(['Calculating right hand side for BVP #' num2str(bvp) '...']);
-f_h = rightHandSide(gaussOrderF_h, ansFunSpace, bvp);
-disp(['Finished calculating right hand side.']);
+f_h = rightHandSide(gaussOrderF_h, ansFunSpace);
+disp('Finished calculating right hand side.');
 toc
 
 tic
 %Calculate coefficients u_h for approximated solution of u ("ansatz")
-disp(['Solving the equation system...']);
-u_h = A_h\f_h;
-disp(['Finished solving the equation system']);
+disp('Solving the equation system...');
+%u_h = A_h\f_h;
+u_h = PCG(A_h, f_h);
+disp('Finished solving the equation system.');
 toc
 
 tic
-%Calculate matrix of approximated discrete solution
+%Calculate matrix of approximated discrete solution and absolute Error
 disp(['Calculating matrix with discrete solution for ' num2str(evalSubIntervals) ' subintervals...']);
 u = solution(ansFunSpace, u_h);
 U = u.discreteSolution(evalSubIntervals);
-disp(['Finished calculating matrix with discrete solution.']);
+disp('Finished calculating matrix with discrete solution.');
 toc
 
 figure;
 surf(U(:,:,1), U(:,:,2), U(:,:,3));
 
-%Calculate absolute error u-u_h in Lp-norm
-Uref = exactSolution(bvp, evalSubIntervals);
-p = 2;
-n = evalSubIntervals+1;
-absErrorLp = norm(U(:,:,3)-Uref(:,:,3), p)*(1/n^2)^(1/p);
+tic
+disp('Calculating Lp-Error and a posteriori estimator...');
+%||u-u_h||_0,Omega
+errL2 = u.errorLp(2, 3);
 
-%A posteriori error estimator
-%laplaceAnsFunSpace = gradAnsFunSpace.divergence;
-eta = etaAPost(u, bvp, 3, 3);
-
+%A posteriori error estimator eta
+eta = etaAPost(u, 3, 3);
+disp('Finished calculating Lp-Error and a posteriori estimator.');
+toc

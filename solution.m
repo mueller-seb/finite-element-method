@@ -5,38 +5,96 @@ classdef solution < handle
     properties
         ansatzFunctionSpace = ansatzFunctionSpace.empty(0, 1);
         u_h
+        shapeFunctions %assembled shape functions for each domain
     end
     
     methods
         function obj = solution(ansatzFunctionSpace, u_h)
             obj.ansatzFunctionSpace = ansatzFunctionSpace;
             obj.u_h = u_h;
+            obj.shapeFunctions = shapeFunction.empty(0, size(obj.ansatzFunctionSpace.Mesh.domains, 2));
+            for domain = obj.ansatzFunctionSpace.Mesh.domains(1:end)
+                obj.shapeFunctions(end+1) = obj.shapeFunction(domain);
+            end                
         end
         
         function u = evaluate(obj, x, y)
-            u = 0;
-            i = 1;
-            for phi_i = obj.ansatzFunctionSpace.basisFunctions(1:end)
-                u = u + obj.u_h(i)*phi_i.evaluate(x, y);
-                i = i + 1;
-            end           
+            elementType = obj.ansatzFunctionSpace.Mesh.elementType;
+            if (ismember(elementType, [1, 2]))
+                Omega = obj.ansatzFunctionSpace.Mesh.Omega;
+                meshSubIntervals = obj.ansatzFunctionSpace.Mesh.subIntervals;
+                nodeDist = (Omega(:,2)-Omega(:,1)) ./ meshSubIntervals';
+                intervalXY = ceil([x; y] ./ nodeDist);
+                for i=find(intervalXY==0)
+                    intervalXY(i) = intervalXY(i)+1;
+                end
+                domainIndex = (intervalXY(2)-1)*meshSubIntervals(2) + intervalXY(1);
+                if (elementType == 2)
+                    u = obj.shapeFunctions(domainIndex).evaluate(x, y);
+                elseif (elementType == 1)
+                    domainIndex = 2*domainIndex;
+                    u = obj.shapeFunctions(domainIndex).evaluate(x,y);
+                    if (u == 0)
+                        u = obj.shapeFunctions(domainIndex-1).evaluate(x,y);
+                    end
+                end
+            else
+                u = 0;
+                i = 1;
+                for phi_i = obj.ansatzFunctionSpace.basisFunctions(1:end)
+                    u = u + obj.u_h(i)*phi_i.evaluate(x, y);
+                    i = i + 1;
+                end
+            end
+        end
+        
+        function errLp = errorLp(obj, p, gaussOrder) %||u-u_h||_Lp,Omega
+            integral = 0;
+            for shapeFun = obj.shapeFunctions(1:end)
+                difference = @(x,y) abs(u(obj.ansatzFunctionSpace.bvp, x, y) - shapeFun.evaluate(x, y))^p;
+                integral = integral + gaussQuad(difference, shapeFun.domain.nodes, gaussOrder);                
+            end
+            errLp = integral^(1/p);
         end
         
         %Generates 3-dim array of x, y and u(x, y)
-        function U3D = discreteSolution(obj, n) %n number of subintervals
-            U = zeros(n+1);
-            for i = 0:n
-                for j = 0:n
-                    U(i+1, j+1) = obj.evaluate(i*(1.0/n), j*(1.0/n));
+        function XYU = discreteSolution(obj, subIntervals)
+            if (subIntervals == obj.ansatzFunctionSpace.Mesh.subIntervals)
+                XYU = obj.solutionOnMeshPoints;
+            else
+                Omega = obj.ansatzFunctionSpace.Mesh.Omega;
+                interval = (Omega(:,2)-Omega(:,1)) ./ subIntervals';
+                U = zeros(subIntervals(2)+1, subIntervals(1)+1);
+                for j = 0:subIntervals(2)
+                    for i = 0:subIntervals(1)
+                        U(i+1, j+1) = obj.evaluate(i*interval(1), j*interval(2));
+                    end
                 end
+                x = linspace(Omega(1,1), Omega(1,2), subIntervals(1)+1);
+                y = linspace(Omega(2,1), Omega(2,2), subIntervals(2)+1);
+                [X, Y] = meshgrid(x, y);
+                XYU = cat(3, X, Y, U);
             end
-            x = linspace(0, 1, n+1);
-            y = linspace(0, 1, n+1);
-            [X, Y] = meshgrid(x, y);
-            U3D = cat(3, X, Y, U);
         end
         
-        function solutionShapeFun = shapeFunction(obj, domain) %returns assembled shape function of the solution on a single domain (for efficiency in a posteriori est.)
+        function XYU = solutionOnMeshPoints(obj) %very fast
+            Omega = obj.ansatzFunctionSpace.Mesh.Omega;
+            subIntervals = obj.ansatzFunctionSpace.Mesh.subIntervals;
+            x = linspace(Omega(1,1), Omega(1,2), subIntervals(1)+1);
+            y = linspace(Omega(2,1), Omega(2,2), subIntervals(2)+1);
+            [X, Y] = meshgrid(x, y);
+            if (obj.ansatzFunctionSpace.bvp == 1)
+                U = zeros(subIntervals(2)+1, subIntervals(1)+1);
+                U(2:end-1, 2:end-1) = reshape(obj.u_h, subIntervals(2)-1, subIntervals(1)-1);
+            elseif (obj.ansatzFunctionSpace.bvp == 2)
+                U = reshape(obj.u_h, subIntervals(2)+1, subIntervals(1)+1);
+            end
+            XYU = cat(3, X, Y, U);
+        end
+        
+        %returns assembled shape function of the solution on a domain (used
+        %in a posteriori est. and Lp error)
+        function solutionShapeFun = shapeFunction(obj, domain)
             solutionShapeFun = shapeFunction(domain, polynomial(0));
             i=1;
             for basisFun = obj.ansatzFunctionSpace.basisFunctions(1:end)
