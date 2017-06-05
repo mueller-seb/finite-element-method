@@ -9,16 +9,16 @@ classdef ansatzFunctionSpace < handle
     end
     
     methods
-        function obj = ansatzFunctionSpace(Mesh, bvp, basisFunctions)
+        function obj = ansatzFunctionSpace(Mesh, bvp, higherPolynomials, basisFunctions)
             obj.Mesh = Mesh;
             obj.bvp = bvp;
-            if (nargin == 2)
+            if (nargin == 3)
                 for i=obj.Mesh.nodes(1:end)
                     if(~(i.isBoundaryPoint && (bvp == 1)))
-                        obj.basisFunctions(end+1) = basisFunction(i);
+                        obj.basisFunctions(end+1) = basisFunction(i, higherPolynomials);
                     end
                 end
-            elseif (nargin == 3)
+            elseif (nargin == 4)
                 obj.basisFunctions = basisFunctions;
             end
         end

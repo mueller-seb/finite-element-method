@@ -30,7 +30,7 @@ classdef basisFunctionVector < handle
             for i = 1:N
                 divShapeFunVec(i) = obj.shapeFunctionVectors(i).shapeFunX.deriveX + obj.shapeFunctionVectors(i).shapeFunY.deriveY;
             end
-            div = basisFunction(obj.basisNode, divShapeFunVec);
+            div = basisFunction(obj.basisNode, 0, divShapeFunVec);
         end
     end
     

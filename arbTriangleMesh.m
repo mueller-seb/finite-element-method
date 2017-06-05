@@ -7,10 +7,12 @@ classdef arbTriangleMesh
         domains
         edges = edge.empty;
         elementType = 3
+        Omega
     end
     
     methods
-        function obj = arbTriangleMesh(meshdata)
+        function obj = arbTriangleMesh(meshdata, Omega)
+            obj.Omega = Omega;
             M = size(meshdata.Nodes, 2);
             obj.nodes = node.empty(0, M);
             for nodeIndex = 1:M

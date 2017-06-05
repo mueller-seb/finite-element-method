@@ -53,7 +53,7 @@ classdef shapeFunction < handle
     methods(Static)
         function polyCoefficients = calcCoefficients(fixPoints, fixPointValues)
          
-                n = size(fixPointValues, 2); %3=linear, 4=bilinear, 6=quadratic
+                n = size(fixPointValues, 2); %3=linear, 4=bilinear, 6=quadratic, 8
                 if (size(fixPoints, 2) == n)
                     X = [fixPoints.x]';
                     Y = [fixPoints.y]';
@@ -86,12 +86,18 @@ classdef shapeFunction < handle
                             c=A\b;
                             coeff = [c(1), c(3);
                                      c(2), c(4)];
-                        case 6 %quadratic case qith 6 coefficients
-                            A=[A; X.*Y; X.*X; Y.*Y];
+                        case 6 %quadratic case qith 6 coefficients (for higher polynomials in triangles)
+                            A=[A, X.*Y, X.*X, Y.*Y];
                             c=A\b;
                             coeff = [c(1), c(3), c(6);
                                      c(2), c(4), 0;
                                      c(5), 0,    0];
+                        case 8 %case with 8 coefficients (for higher polynomials in squares)
+                            A=[A, X.*Y, X.*X, Y.*Y, X.^2.*Y, X.*Y.^2];
+                            c=A\b;
+                            coeff = [c(1), c(3), c(6);
+                                     c(2), c(4), c(8);
+                                     c(5), c(7), 0];
                     end
                     polyCoefficients = coeff;
                 end

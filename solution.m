@@ -59,7 +59,8 @@ classdef solution < handle
         
         %Generates 3-dim array of x, y and u(x, y)
         function XYU = discreteSolution(obj, subIntervals)
-            if (subIntervals == obj.ansatzFunctionSpace.Mesh.subIntervals)
+            
+            if (ismember(obj.ansatzFunctionSpace.Mesh.elementType, [1, 2]) && (subIntervals == obj.ansatzFunctionSpace.Mesh.subIntervals))
                 XYU = obj.solutionOnMeshPoints;
             else
                 Omega = obj.ansatzFunctionSpace.Mesh.Omega;

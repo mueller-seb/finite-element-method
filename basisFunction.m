@@ -9,21 +9,51 @@ classdef basisFunction < handle
     end
     
     methods
-        function obj = basisFunction(basisNode, shapeFunctions)
+        function obj = basisFunction(basisNode, higherPolynomials, shapeFunctions)
 
             obj.basisNode = basisNode;
-            
-            if (nargin == 2)
+                        
+            if (nargin == 3)
                 obj.shapeFunctions = shapeFunctions;
-            elseif (nargin == 1)
+            
+            elseif (nargin == 2)
                 adjDomains = basisNode.adjDomains;
                 for domain = adjDomains(1:end)
-
-                    nodes = domain.nodes;
-                    fixPointValues = zeros(1, size(nodes, 2));
-                    fixPointValues(find(nodes == basisNode)) = 1;
-                    shapeFunPoly = polynomial(shapeFunction.calcCoefficients(nodes, fixPointValues));
-                    obj.shapeFunctions(end+1) = shapeFunction(domain, shapeFunPoly);
+                    if (~higherPolynomials)
+                        nodes = domain.nodes;
+                        fixPointValues = zeros(1, size(nodes, 2));
+                        fixPointValues(find(nodes == basisNode)) = 1;
+                        shapeFunPoly = polynomial(shapeFunction.calcCoefficients(nodes, fixPointValues));
+                        obj.shapeFunctions(end+1) = shapeFunction(domain, shapeFunPoly);
+                    else
+                        N = 2*size(domain.nodes, 2);
+                        nodes = node.empty(0, N);
+                        fixPointValues = zeros(1, N);
+                        for j=1:2:N
+                            nodes(j) = domain.nodes(ceil(j/2));
+                        end
+                        for j=2:2:N-1
+                           nodes(j) = midpoint(nodes(j-1), nodes(j+1));
+                        end
+                        nodes(N) = midpoint(nodes(N-1), nodes(1));
+                        
+                        j = find(nodes==basisNode);
+                        if (j~=N)
+                            k = j+1;
+                        else
+                            k = 1;
+                        end
+                        if (j~=1)
+                            i = j-1;
+                        else
+                            i = N;
+                        end 
+                        fixPointValues(j) = 1;
+                        fixPointValues(i) = 0.75;
+                        fixPointValues(k) = 0.75;
+                        shapeFunPoly = polynomial(shapeFunction.calcCoefficients(nodes, fixPointValues));
+                        obj.shapeFunctions(end+1) = shapeFunction(domain, shapeFunPoly); 
+                    end
                 end
             end
         end

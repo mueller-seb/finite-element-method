@@ -22,7 +22,10 @@ bvp = 2;
 Omega = [0, 1; 0, 1]; %xMin, xMax; yMin, yMax
 %
 %Finite element type. 1 for rectangular triangle elements, 2 for square elements, 3 for arbitrary triangle elements
-elementType = 1;
+elementType = 3;
+%
+%Use higher polynomials (6 fixpoints on triangle, 8 fixpoints on square)
+higherPolynomials = 0;
 %
 %#Subintervals of the generated rectangular triangle (1) and square (2) meshes. [x intervals, y intervals]
 meshSubIntervals = [10, 10];
@@ -31,9 +34,9 @@ meshSubIntervals = [10, 10];
 evalSubIntervals = [10, 10]; %evalSubIntervals = meshSubIntervals very fast
 %
 %Order of Gaussian quadrature for stiffness matrix
-gaussOrderA_h = 3;
+gaussOrderA_h = 5;
 %Order of Gaussian quadrature for right hand side
-gaussOrderF_h = 4;
+gaussOrderF_h = 5;
 %--------END OF PARAMETRIZATION AREA-------------------
 
 tic
@@ -46,7 +49,7 @@ elseif (elementType == 2)
     Mesh = squareMesh(meshSubIntervals, Omega);
 elseif (elementType == 3)
     arbTriangles_PDE; %generates meshdata
-    Mesh = arbTriangleMesh(meshdata);
+    Mesh = arbTriangleMesh(meshdata, Omega);
 end
 disp('Finished creating mesh.');
 toc
@@ -54,7 +57,7 @@ toc
 tic
 %Create ansatz function space
 disp('Creating ansatz function space...');
-ansFunSpace = ansatzFunctionSpace(Mesh, bvp);
+ansFunSpace = ansatzFunctionSpace(Mesh, bvp, higherPolynomials);
 disp('Finished creating ansatz Function space.');
 toc
 

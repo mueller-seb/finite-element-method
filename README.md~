@@ -7,10 +7,10 @@ Finite element code in matlab for two different boundary value problems:
 >   u = 0 on boundary of Omega
 >   Omega = [0,1]^2
 
->   BVP2
->   -laplace(u)+u = cos(pi*x)*cos(pi*x) in Omega
->   partial_n(u) = 0 on boundary of Omega
->   Omega = [0,1]^2
+>BVP2
+    -laplace(u)+u = cos(pi*x)*cos(pi*x) in Omega
+    partial_n(u) = 0 on boundary of Omega
+    Omega = [0,1]^2
 
 #HowTo
  Make sure, that all files are in the same folder.

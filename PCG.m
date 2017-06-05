@@ -15,10 +15,14 @@ x = zeros(n, 1); % initialise x
 
 %test if A is symmetric and positive difinite
 if  ~issymmetric(A) 
-  error('Matrix is not symmetric.');
+  %error('Matrix is not symmetric.');
+  b = A'*b;
+  A = A'*A;
 end
 if ~all(eig(A) > eps)
-    error('Matrix is not positive definite');
+    %error('Matrix is not positive definite');
+    b = A'*b;
+    A = A'*A;
 end
 
 % Define tolerance threshold for iteration steps
