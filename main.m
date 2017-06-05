@@ -15,40 +15,53 @@
 
 startup;
 
-%--------BEGIN OF PARAMETRIZATION AREA------------------
-%Choose boundary value problem. 1 for BVP #1, 2 for BVP #2.
-bvp = 2;
+%------------BEGIN OF PARAMETRIZATION AREA------------------
+%Choose boundary value problem.
+%1 for BVP #1, 2 for BVP #2.
+bvp = 1; 
 %
-Omega = [0, 1; 0, 1]; %xMin, xMax; yMin, yMax
+%[xMin, xMax; yMin, yMax]
+Omega = [0, 1; 0, 1];
 %
-%Finite element type. 1 for rectangular triangle elements, 2 for square elements, 3 for arbitrary triangle elements
-elementType = 3;
+%Finite element type.
+%1 for rectangular triangle elements, 2 for square elements, 3 for arbitrary triangle elements
+elementType = 1;
 %
-%Use higher polynomials (6 fixpoints on triangle, 8 fixpoints on square)
+%Use higher polynomials (6 instead of 3 fixpoints on triangle, 8 instead of 4 fixpoints on square)
+%1 on, 0 off
 higherPolynomials = 0;
 %
-%#Subintervals of the generated rectangular triangle (1) and square (2) meshes. [x intervals, y intervals]
-meshSubIntervals = [10, 10];
+%#Subintervals of the generated rectangular triangle (1) and square (2) meshes.
+%[x intervals, y intervals]
+meshSubIntervals = [5, 8];
 %
-%#Subintervals of the discrete solution. [x intervals, y intervals]
-evalSubIntervals = [10, 10]; %evalSubIntervals = meshSubIntervals very fast
+%#Subintervals of the discrete solution evaluator.
+%[x intervals, y intervals]
+%evalSubIntervals = meshSubIntervals is very fast in the case of non arbitrary triangle meshes.
+evalSubIntervals = [8, 11]; 
 %
-%Order of Gaussian quadrature for stiffness matrix
-gaussOrderA_h = 5;
-%Order of Gaussian quadrature for right hand side
-gaussOrderF_h = 5;
+%Order of Gaussian quadrature for calculation of stiffness matrix A_h
+gaussOrderA_h = 3;
+%Order of Gaussian quadrature for calculation of right hand side f_h
+gaussOrderF_h = 4;
+%Orders of Gaussian quadrature for the a posteriori estimator eta
+%[Order on interior, order on edges]
+gaussOrderEta = [3, 3];
+%
+%Order of Gaussian quadrature for calculation of the L2 error ||u-u_h||_Omega
+gaussOrderErrorL2 = 3;
 %--------END OF PARAMETRIZATION AREA-------------------
 
 tic
 %Create mesh
-if (elementType == 1)
+if (elementType == 1) %rectangular triangle elements
     disp(['Creating mesh of rectangular triangle elements with ' num2str(meshSubIntervals) ' subintervals...']);
     Mesh = rectTriangleMesh(meshSubIntervals, Omega);
-elseif (elementType == 2)
+elseif (elementType == 2) %
     disp(['Creating mesh of squares with ' num2str(meshSubIntervals) ' subintervals...']);
     Mesh = squareMesh(meshSubIntervals, Omega);
 elseif (elementType == 3)
-    arbTriangles_PDE; %generates meshdata
+    arbTriangles_PDE;
     Mesh = arbTriangleMesh(meshdata, Omega);
 end
 disp('Finished creating mesh.');
@@ -94,21 +107,21 @@ toc
 
 tic
 %Calculate matrix of approximated discrete solution and absolute Error
-disp(['Calculating matrix with discrete solution for ' num2str(evalSubIntervals) ' subintervals...']);
+disp(['Calculating matrix of discrete solution for ' num2str(evalSubIntervals) ' subintervals...']);
 u = solution(ansFunSpace, u_h);
 U = u.discreteSolution(evalSubIntervals);
-disp('Finished calculating matrix with discrete solution.');
+disp('Finished calculating matrix of discrete solution.');
 toc
 
 figure;
 surf(U(:,:,1), U(:,:,2), U(:,:,3));
 
 tic
-disp('Calculating Lp-Error and a posteriori estimator...');
+disp('Calculating L2-Error and a posteriori estimator...');
 %||u-u_h||_0,Omega
-errL2 = u.errorLp(2, 3);
+errL2 = u.errorLp(2, gaussOrderErrorL2);
 
 %A posteriori error estimator eta
-eta = etaAPost(u, 3, 3);
-disp('Finished calculating Lp-Error and a posteriori estimator.');
+eta = etaAPost(u, gaussOrderEta);
+disp('Finished calculating L2-Error and a posteriori estimator.');
 toc

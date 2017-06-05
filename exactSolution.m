@@ -1,4 +1,4 @@
-function [ U3D ] = exactSolution( bvp, Omega, n )
+function [ U3D ] = exactSolution( bvp, Omega, n ) %NOT USED ANY MORE
 %EXACTSOLUTION Summary of this function goes here
 %   Detailed explanation goes here
 x = linspace(Omega(1), Omega(2), n(1)+1);
