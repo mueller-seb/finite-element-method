@@ -11,7 +11,7 @@
 %     partial_n(u) = 0 on boundary of Omega (Neumann condition)
 %     Omega = [0,1]^2
 %     SOLUTION: u(x,y) = sin(pi*x)*sin(pi*x)/(2pi^2)
-%Further mathematical description of the problem in Remark 3.27 (Neumann boundary conditions)
+%Further mathematical description of the problem in Grossmann & Roos, Remark 3.27 (Neumann boundary conditions)
 
 startup;
 
@@ -27,18 +27,18 @@ Omega = [0, 1; 0, 1];
 %1 for rectangular triangle elements, 2 for square elements, 3 for arbitrary triangle elements
 elementType = 1;
 %
-%Use higher polynomials (6 instead of 3 fixpoints on triangle, 8 instead of 4 fixpoints on square)
+%Use higher polynomials (from 6 instead of 3 fixpoints on triangles, 8 instead of 4 fixpoints on squares)
 %1 on, 0 off
 higherPolynomials = 0;
 %
 %#Subintervals of the generated rectangular triangle (1) and square (2) meshes.
 %[x intervals, y intervals]
-meshSubIntervals = [5, 8];
+meshSubIntervals = [10, 10];
 %
 %#Subintervals of the discrete solution evaluator.
 %[x intervals, y intervals]
 %evalSubIntervals = meshSubIntervals is very fast in the case of non arbitrary triangle meshes.
-evalSubIntervals = [8, 11]; 
+evalSubIntervals = [15, 15]; 
 %
 %Order of Gaussian quadrature for calculation of stiffness matrix A_h
 gaussOrderA_h = 3;
@@ -75,7 +75,8 @@ disp('Finished creating ansatz Function space.');
 toc
 
 tic
-%Create gradients of ansatz function space
+%Create and save gradients of the ansatz function space basis functions. This makes calculation of A_h more
+%efficient because identical gradients don't have to be computed multiple times during the queue.
 disp('Creating ansatz function space gradients...');
 gradAnsFunSpace = ansFunSpace.gradient;
 %laplaceAnsFunSpace = gradAnsFunSpace.divergence;
@@ -86,7 +87,7 @@ tic
 %Calculate stiffness matrix A_h
 disp(['Calculating stiffness matrix for BVP #' num2str(bvp) '...']);
 A_h = stiffnessMatrix(gaussOrderA_h, ansFunSpace, gradAnsFunSpace);
-%A_h = stiffnessMatrix(gaussOrderA_h, bvp, ansFunSpace);
+%A_h = stiffnessMatrix(gaussOrderA_h, ansFunSpace);
 disp('Finished calculating stiffness matrix.');
 toc
 
@@ -106,7 +107,7 @@ disp('Finished solving the equation system.');
 toc
 
 tic
-%Calculate matrix of approximated discrete solution and absolute Error
+%Calculate matrix of approximated discrete solution
 disp(['Calculating matrix of discrete solution for ' num2str(evalSubIntervals) ' subintervals...']);
 u = solution(ansFunSpace, u_h);
 U = u.discreteSolution(evalSubIntervals);
@@ -118,7 +119,7 @@ surf(U(:,:,1), U(:,:,2), U(:,:,3));
 
 tic
 disp('Calculating L2-Error and a posteriori estimator...');
-%||u-u_h||_0,Omega
+%||u-u_h||_L2,Omega
 errL2 = u.errorLp(2, gaussOrderErrorL2);
 
 %A posteriori error estimator eta

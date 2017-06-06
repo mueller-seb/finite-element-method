@@ -1,5 +1,5 @@
 classdef ansatzFunctionSpace < handle
-    %ANSATZFUNCTIONSPACE Basis of ansatz functions
+    %ANSATZFUNCTIONSPACE Basis of ansatz functions V_h
     %   Detailed explanation goes here
     
     properties

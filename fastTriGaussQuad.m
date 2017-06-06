@@ -5,7 +5,7 @@ function [ z ] = fastTriGaussQuad( fun, nodes, N )
 
 % procedure is from http://math2.uncc.edu/~shaodeng/TEACHING/math5172/Lectures/Lect_15.PDF
 % but one can also use my own, non symmetrical implementation in
-% triGaussQuad.m instead
+% triGaussQuad.m instead by selecting it in the gaussQuad switch.
 
 X = [nodes.x]';
 Y = [nodes.y]';

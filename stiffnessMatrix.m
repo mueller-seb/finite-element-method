@@ -1,13 +1,14 @@
 function [ A_h ] = stiffnessMatrix( gaussOrder, ansFunSpace, gradAnsFunSpace )
 %STIFFNESSMATRIX Assembles stiffness matrix A_h
-%   Detailed explanation goes here
+%   This is much more efficient if gradients of the ansatz function space is already given (gradAnsFunSpace). Otherwise gradients of basis
+%   functions of the ansatz function space are computed multiple times during the queue.
 
-n = size(gradAnsFunSpace.basisFunctionVectors, 2);
+n = size(ansFunSpace.basisFunctions, 2);
 A_h = zeros(n);
-bvp = ansFunSpace.bvp;
+bvp = ansFunSpace.bvp; 
 
 if (nargin == 3) %gradients of ansatz function space are given (less CPU-intensive, more memory intensive)
-
+    
 for i=1:n
     for j=1:n
         gradPhi_i = gradAnsFunSpace.basisFunctionVectors(i);
@@ -40,8 +41,8 @@ elseif (nargin == 2) %gradients of ansatz function space not given (more CPU-int
     
 for i=1:n
     for j=1:n
-        phi_i = funSpace.basisFunctions(i);
-        phi_j = funSpace.basisFunctions(j);
+        phi_i = ansFunSpace.basisFunctions(i);
+        phi_j = ansFunSpace.basisFunctions(j);
         a_ij = 0;
         for shapeFun_i = phi_i.shapeFunctions(1:end)
             gradShapeFun_i = shapeFun_i.gradient;

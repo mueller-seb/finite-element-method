@@ -48,7 +48,7 @@ classdef rectTriangleMesh < handle
             obj.domains = triangle.empty(0, 2*n(1)*n(2));
             domainIndex = 1;
             for j = 1:n(2) %going through nodes, creating |\ domains (two vertices bottom, one vertice top, hypotenuse right)
-                for i=1:n(1)
+                for i=1:n(1) %j y-direction, i x-direction
                     nodeIndex = (j-1)*(n(1)+1)+i;
                     vertices = node.empty(0, 3);
                     vertices(1) = obj.nodes(nodeIndex);

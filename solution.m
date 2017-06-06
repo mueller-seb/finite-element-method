@@ -1,7 +1,7 @@
 classdef solution < handle
     %SOLUTION Class describes approximated solution u
-    %   Consists of coefficients vector u_h and an array of assembled shape
-    %   functions describing the approx. solution on each domain of the mesh.
+    %   Consists of coefficients vector u_h and an array of summed up and weighted shape
+    %   functions describing the approx. solution on the corresponding domain of the mesh.
     
     properties
         ansatzFunctionSpace = ansatzFunctionSpace.empty(0, 1);
@@ -89,9 +89,9 @@ classdef solution < handle
             [X, Y] = meshgrid(x, y);
             if (obj.ansatzFunctionSpace.bvp == 1)
                 U = zeros(subIntervals(2)+1, subIntervals(1)+1);
-                U(2:end-1, 2:end-1) = reshape(obj.u_h, subIntervals(2)-1, subIntervals(1)-1);
+                U(2:end-1, 2:end-1) = reshape(obj.u_h, subIntervals(1)-1, subIntervals(2)-1)';
             elseif (obj.ansatzFunctionSpace.bvp == 2)
-                U = reshape(obj.u_h, subIntervals(2)+1, subIntervals(1)+1);
+                U = reshape(obj.u_h, subIntervals(1)+1, subIntervals(2)+1)';
             end
             XYU = cat(3, X, Y, U);
         end

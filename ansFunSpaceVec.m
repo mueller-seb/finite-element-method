@@ -1,5 +1,5 @@
 classdef ansFunSpaceVec < handle
-    %ANSFUNSPACEVEC Vectorial basis of ansatz functions
+    %ANSFUNSPACEVEC Basis of vectorial ansatz functions
     %   Used for gradients of basis functions of ansatz function space
     
     properties
@@ -19,7 +19,7 @@ classdef ansFunSpaceVec < handle
             for i=1:N
                 divBasisFuns(i) = obj.basisFunctionVectors(i).divergence;
             end
-            divAnsFunSpace = ansatzFunctionSpace(obj.Mesh, 0, divBasisFuns);            
+            divAnsFunSpace = ansatzFunctionSpace(obj.Mesh, 0, 0, divBasisFuns);            
         end
     end
     

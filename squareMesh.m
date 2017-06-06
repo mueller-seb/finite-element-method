@@ -1,5 +1,5 @@
 classdef squareMesh < handle
-    %SQUAREMESH Summary of this class goes here
+    %SQUAREMESH Creates mesh of squares
     %   Detailed explanation goes here
     
     properties

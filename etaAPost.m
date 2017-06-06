@@ -1,19 +1,21 @@
 function [ eta ] = etaAPost(u, gaussOrder )
-%ETA Eta of a posteriori error estimation
-%   Detailed explanation goes here
+%ETAAPOST A posteriori error estimation, formula for eta in Num. treatment of
+%PDEs, Grossmann & Roos, p. 290.
+%   Uses the shapeFunctions property of solution to improve efficiency
 
 F = f(u.ansatzFunctionSpace.bvp);
 u.ansatzFunctionSpace.Mesh.createEdges;
 
-     function valueK = etaKsqr(shapeFun)
-         h_K = shapeFun.domain.diameter;
-         U_K = shapeFun;
+     %eta^2 on domain K=solutionShapeFun.domain
+     function valueK = etaKsqr(solutionShapeFun)
+         U_K = solutionShapeFun;
+         h_K = U_K.domain.diameter;         
          gradU_K = U_K.gradient;
          laplaceU_K = U_K.laplace;
          r_K = @(x, y) F(x,y) + laplaceU_K.evaluate(x,y);
          
          edgeTerm = 0;
-         for E = shapeFun.domain.edges(1:end)
+         for E = U_K.domain.edges(1:end)
              n_E = E.normVec;
              r_E = @(x, y) dot(n_E, gradU_K.evaluate(x,y));
              h_E = E.length;
@@ -21,15 +23,19 @@ u.ansatzFunctionSpace.Mesh.createEdges;
          end
          edgeTerm = edgeTerm/2;
          
-         interiorTerm = h_K^2 * gaussQuad(r_K, shapeFun.domain.nodes, gaussOrder(1))^2;
+         interiorTerm = h_K^2 * gaussQuad(r_K, U_K.domain.nodes, gaussOrder(1))^2;
          valueK = interiorTerm + edgeTerm;       
      end
  
      eta = 0;
-     for shapeFun = u.shapeFunctions(1:end)
+     for shapeFun = u.shapeFunctions(1:end) %queue over all domains of the mesh
          eta = eta + etaKsqr(shapeFun);
      end
- 
+     
+     eta = sqrt(eta);
+     
+%This doesn't use the shapeFunctions property of solution. Calculates
+%shapeFun for each domain, so it's less CPU-efficient.
 %     eta = 0;
 %     for K = u.ansatzFunctionSpace.Mesh.domains(1:end)
 %         eta = eta + etaKsqr(K);
@@ -59,7 +65,5 @@ u.ansatzFunctionSpace.Mesh.createEdges;
 %     for K = u.ansatzFunctionSpace.Mesh.domains(1:end)
 %         eta = eta + etaKsqr(K);
 %     end
-    
-    eta = sqrt(eta);
 end
 
