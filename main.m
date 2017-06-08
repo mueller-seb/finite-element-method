@@ -54,10 +54,10 @@ gaussOrderErrorL2 = 3;
 
 tic
 %Create mesh
-if (elementType == 1) %rectangular triangle elements
+if (elementType == 1)
     disp(['Creating mesh of rectangular triangle elements with ' num2str(meshSubIntervals) ' subintervals...']);
     Mesh = rectTriangleMesh(meshSubIntervals, Omega);
-elseif (elementType == 2) %
+elseif (elementType == 2)
     disp(['Creating mesh of squares with ' num2str(meshSubIntervals) ' subintervals...']);
     Mesh = squareMesh(meshSubIntervals, Omega);
 elseif (elementType == 3)

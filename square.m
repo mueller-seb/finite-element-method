@@ -1,5 +1,5 @@
 classdef square < handle
-    %SQUARE Summary of this class goes here
+    %SQUARE Domain of type square
     %   Detailed explanation goes here
     
     properties

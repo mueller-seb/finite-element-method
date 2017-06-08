@@ -1,14 +1,14 @@
 function [ eta ] = etaAPost(u, gaussOrder )
 %ETAAPOST A posteriori error estimation, formula for eta in Num. treatment of
 %PDEs, Grossmann & Roos, p. 290.
-%   Uses the shapeFunctions property of solution to improve efficiency
+%   Uses the shapeFunctions property of solution for better efficiency
 
 F = f(u.ansatzFunctionSpace.bvp);
 u.ansatzFunctionSpace.Mesh.createEdges;
 
      %eta^2 on domain K=solutionShapeFun.domain
-     function valueK = etaKsqr(solutionShapeFun)
-         U_K = solutionShapeFun;
+     function valueK = etaKsqr(solutionShapeScalarFun)
+         U_K = solutionShapeScalarFun;
          h_K = U_K.domain.diameter;         
          gradU_K = U_K.gradient;
          laplaceU_K = U_K.laplace;
@@ -28,14 +28,14 @@ u.ansatzFunctionSpace.Mesh.createEdges;
      end
  
      eta = 0;
-     for shapeFun = u.shapeFunctions(1:end) %queue over all domains of the mesh
-         eta = eta + etaKsqr(shapeFun);
+     for shapeScalarFun = u.shapeScalarFunctions(1:end) %queue over all domains of the mesh
+         eta = eta + etaKsqr(shapeScalarFun);
      end
      
      eta = sqrt(eta);
      
 %This doesn't use the shapeFunctions property of solution. Calculates
-%shapeFun for each domain, so it's less CPU-efficient.
+%shapeScalarFun for each domain, so it's less CPU-efficient.
 %     eta = 0;
 %     for K = u.ansatzFunctionSpace.Mesh.domains(1:end)
 %         eta = eta + etaKsqr(K);
@@ -43,7 +43,7 @@ u.ansatzFunctionSpace.Mesh.createEdges;
 
 %     function valueK = etaKsqr(domain)
 %         h_K = domain.diameter;
-%         U_K = u.shapeFunction(domain);
+%         U_K = u.shapeScalarFunction(domain);
 %         gradU_K = U_K.gradient;
 %         laplaceU_K = U_K.laplace;
 %         r_K = @(x, y) F(x,y) + laplaceU_K.evaluate(x,y);

@@ -6,16 +6,16 @@ classdef solution < handle
     properties
         ansatzFunctionSpace = ansatzFunctionSpace.empty(0, 1);
         u_h %vector of coefficients
-        shapeFunctions %assembled shape functions for each domain of the mesh (for efficiency purposes)
+        shapeScalarFunctions = shapeScalarFunction.empty %assembled shape functions for each domain of the mesh (for efficiency purposes)
     end
     
     methods
         function obj = solution(ansatzFunctionSpace, u_h)
             obj.ansatzFunctionSpace = ansatzFunctionSpace;
             obj.u_h = u_h;
-            obj.shapeFunctions = shapeFunction.empty(0, size(obj.ansatzFunctionSpace.Mesh.domains, 2));
+            obj.shapeScalarFunctions = shapeScalarFunction.empty(0, size(obj.ansatzFunctionSpace.Mesh.domains, 2));
             for domain = obj.ansatzFunctionSpace.Mesh.domains(1:end)
-                obj.shapeFunctions(end+1) = obj.shapeFunction(domain);
+                obj.shapeScalarFunctions(end+1) = obj.shapeScalarFunction(domain);
             end                
         end
         
@@ -32,18 +32,18 @@ classdef solution < handle
                 end
                 domainIndex = (intervalXY(2)-1)*meshSubIntervals(1) + intervalXY(1);
                 if (elementType == 2)
-                    u = obj.shapeFunctions(domainIndex).evaluate(x, y);
+                    u = obj.shapeScalarFunctions(domainIndex).evaluate(x, y);
                 elseif (elementType == 1)
                     domainIndex = 2*domainIndex;
-                    u = obj.shapeFunctions(domainIndex).evaluate(x,y);
+                    u = obj.shapeScalarFunctions(domainIndex).evaluate(x,y);
                     if (u == 0)
-                        u = obj.shapeFunctions(domainIndex-1).evaluate(x,y);
+                        u = obj.shapeScalarFunctions(domainIndex-1).evaluate(x,y);
                     end
                 end
             else
                 u = 0;
                 i = 1;
-                for phi_i = obj.ansatzFunctionSpace.basisFunctions(1:end)
+                for phi_i = obj.ansatzFunctionSpace.scalarFunctions(1:end)
                     u = u + obj.u_h(i)*phi_i.evaluate(x, y);
                     i = i + 1;
                 end
@@ -98,13 +98,13 @@ classdef solution < handle
         
         %shapeFunction returns assembled shape function of the solution on
         %a domain (used for efficiency reasons in a posteriori est. and Lp error)
-        function solutionShapeFun = shapeFunction(obj, domain)
-            solutionShapeFun = shapeFunction(domain, polynomial(0));
+        function solutionShapeScalarFun = shapeScalarFunction(obj, domain)
+            solutionShapeScalarFun = shapeScalarFunction(domain, polynomial(0));
             i=1;
-            for basisFun = obj.ansatzFunctionSpace.basisFunctions(1:end)
-                for shapeFun = basisFun.shapeFunctions(1:end)
-                    if (shapeFun.domain == domain)
-                        solutionShapeFun = solutionShapeFun + shapeFun.scale(obj.u_h(i));
+            for basisFun = obj.ansatzFunctionSpace.scalarFunctions(1:end)
+                for shapeScalarFun = basisFun.shapeScalarFunctions(1:end)
+                    if (shapeScalarFun.domain == domain)
+                        solutionShapeScalarFun = solutionShapeScalarFun + shapeScalarFun.scale(obj.u_h(i));
                     end
                 end
                 i = i+1;
@@ -114,9 +114,10 @@ classdef solution < handle
         %Calculates error ||u-u_h||_Lp,Omega
         function errLp = errorLp(obj, p, gaussOrder)
             integral = 0;
-            for shapeFun = obj.shapeFunctions(1:end)
-                difference = @(x,y) abs(u(obj.ansatzFunctionSpace.bvp, x, y) - shapeFun.evaluate(x, y))^p;
-                integral = integral + gaussQuad(difference, shapeFun.domain.nodes, gaussOrder);                
+            for shapeScalarFun = obj.shapeScalarFunctions(1:end)
+                U = u(obj.ansatzFunctionSpace.bvp);
+                difference = @(x,y) abs(U(x, y) - shapeScalarFun.evaluate(x, y))^p;
+                integral = integral + gaussQuad(difference, shapeScalarFun.domain.nodes, gaussOrder);                
             end
             errLp = integral^(1/p);
         end      

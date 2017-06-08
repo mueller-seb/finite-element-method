@@ -1,5 +1,5 @@
 classdef triangle < handle
-    %TRIANGLE Summary of this class goes here
+    %TRIANGLE Domain of type triangle
     %   Detailed explanation goes here
     
     properties

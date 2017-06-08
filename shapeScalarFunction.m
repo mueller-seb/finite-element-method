@@ -1,6 +1,6 @@
-classdef shapeFunction < handle
-    %SHAPEFUNCTION Summary of this class goes here
-    %   Detailed explanation goes here
+classdef shapeScalarFunction < handle
+    %SHAPESCALARFUNCTION Polynomial defined shape on one domain
+    %   Coefficients calculation in the static methods part
     
     properties
         domain
@@ -8,7 +8,7 @@ classdef shapeFunction < handle
     end
     
     methods
-        function obj = shapeFunction(domain, polynomial)
+        function obj = shapeScalarFunction(domain, polynomial)
             obj.domain = domain;
             obj.polynomial = polynomial;
         end
@@ -23,26 +23,26 @@ classdef shapeFunction < handle
         
         function sum = plus(obj1, obj2)
             if (obj1.domain == obj2.domain)
-                sum = shapeFunction(obj1.domain, (obj1.polynomial + obj2.polynomial));
+                sum = shapeScalarFunction(obj1.domain, (obj1.polynomial + obj2.polynomial));
             else
                 sum = [obj1, obj2];
             end
         end
         
         function scaling = scale(obj, factor)
-            scaling = shapeFunction(obj.domain, scale(obj.polynomial, factor));
+            scaling = shapeScalarFunction(obj.domain, scale(obj.polynomial, factor));
         end
         
         function derivation = deriveX(obj)
-            derivation = shapeFunction(obj.domain, obj.polynomial.deriveX);
+            derivation = shapeScalarFunction(obj.domain, obj.polynomial.deriveX);
         end
         
         function derivation = deriveY(obj)
-            derivation = shapeFunction(obj.domain, obj.polynomial.deriveY);
+            derivation = shapeScalarFunction(obj.domain, obj.polynomial.deriveY);
         end
         
         function grad = gradient(obj)
-            grad = shapeFunctionVector(obj.deriveX, obj.deriveY);
+            grad = shapeVectorFunction(obj.deriveX, obj.deriveY);
         end
         
         function divgrad = laplace(obj)
@@ -50,7 +50,7 @@ classdef shapeFunction < handle
         end
     end
     
-    methods(Static)
+    methods (Static)
         function polyCoefficients = calcCoefficients(fixPoints, fixPointValues)
          
                 n = size(fixPointValues, 2); %3=linear, 4=bilinear, 6=quadratic, 8

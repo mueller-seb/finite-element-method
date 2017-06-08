@@ -9,7 +9,7 @@ if (loadMeshFromFile == 1)
     meshdata = generateMesh(dat.model);
     pdeplot(dat.model);
     clear dat;
-else
+elseif (loadMeshFromFile == 0)
     disp('Creating arbitrary triangle mesh with MATLAB PDE Toolbox...');
     model = createpde;
     disp('WARNING: Press any key to open the PDE Toolbox. Create arbitrary triangles by clicking the simple triangle symbol. Save data via Draw-->Export Geometry Description. Then exit.');
