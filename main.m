@@ -4,13 +4,13 @@
 %   -laplace(u) = sin(pi*x)*sin(pi*y) in Omega
 %     u = 0 on boundary of Omega (Dirichlet condition)
 %     Omega = [0,1]^2
-%     SOLUTION: u(x,y) = sin(pi*x)*sin(pi*x)/(2pi^2)
+%     SOLUTION: u(x,y) = sin(pi*x)*sin(pi*y)/(2pi^2)
 
 %Right boundary value problem, called BVP #2
-%    -laplace(u)+u = cos(pi*x)*cos(pi*x) in Omega
+%    -laplace(u)+u = cos(pi*x)*cos(pi*y) in Omega
 %     partial_n(u) = 0 on boundary of Omega (Neumann condition)
 %     Omega = [0,1]^2
-%     SOLUTION: u(x,y) = sin(pi*x)*sin(pi*x)/(2pi^2)
+%     SOLUTION: u(x,y) = sin(pi*x)*sin(pi*y)/(2pi^2)
 %Further mathematical description of the problem in Grossmann & Roos, Remark 3.27 (Neumann boundary conditions)
 
 startup;
@@ -21,7 +21,7 @@ startup;
 bvp = 1; 
 %
 %[xMin, xMax; yMin, yMax]
-Omega = [0, 1; 0, 1];
+Omega = [0, 1; 0, 1]; %constant, do not change
 %
 %Finite element type.
 %1 for rectangular triangle elements, 2 for square elements, 3 for arbitrary triangle elements

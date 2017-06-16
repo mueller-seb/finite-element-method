@@ -7,7 +7,7 @@ Finite element code in matlab for two different boundary value problems:
 >Omega = [0,1]^2
 
 >BVP #2  
->-laplace(u)+u = cos(pi*x)*cos(pi*x) in Omega  
+>-laplace(u)+u = cos(pi*x)*cos(pi*y) in Omega  
 >partial_n(u) = 0 on boundary of Omega (Neumann cond.)  
 >Omega = [0,1]^2  
 >Further math. description in Num. treatment of PDE, Grossmann & Roos, Remark 3.27
