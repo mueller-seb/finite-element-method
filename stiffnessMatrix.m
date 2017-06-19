@@ -12,12 +12,7 @@ elementType = ansFunSpace.Mesh.elementType;
 
 if (nargin == 3) %gradients of basis functions of ansatz function space are given (less CPU-intensive, more memory intensive)
 for i=1:n %go through gradients of all basis functions phi_i
-    if (ismember(elementType, [1,2])) %square or rectangular triangle
-        m = i;
-    elseif (elementType == 3) %arb. triangle
-        m = n;
-    end
-    for j=1:m %go through gradients of all basis functions phi_j
+    for j=1:i %go through gradients of all basis functions phi_j
         gradPhi_i = gradAnsFunSpace.vectorFunctions(i);
         gradPhi_j = gradAnsFunSpace.vectorFunctions(j);
         a_ij = 0;
@@ -57,9 +52,7 @@ for i=1:n %go through gradients of all basis functions phi_i
             end
         end
         A_h(i,j) = a_ij;
-        if (ismember(elementType, [1,2])) %matrix symmectric
-            A_h(j,i) = a_ij;
-        end
+        A_h(j,i) = a_ij;
     end
 end
 
