@@ -19,24 +19,39 @@ classdef solution < handle
             end                
         end
         
+        %shapeScalarFunction returns assembled shape function of the solution on
+        %a domain (used for efficiency reasons in evaluation,b a posteriori est. and Lp error)
+        function solutionShapeScalarFun = shapeScalarFunction(obj, domain)
+            solutionShapeScalarFun = shapeScalarFunction(domain, polynomial(0));
+            i=1;
+            for basisFun = obj.ansatzFunctionSpace.scalarFunctions(1:end)
+                for shapeScalarFun = basisFun.shapeScalarFunctions(1:end)
+                    if (shapeScalarFun.domain == domain)
+                        solutionShapeScalarFun = solutionShapeScalarFun + shapeScalarFun.scale(obj.u_h(i));
+                    end
+                end
+                i = i+1;
+            end
+        end
+        
         %Evaluates value of the approx. solution on a point x,y
         function u = evaluate(obj, x, y)
             elementType = obj.ansatzFunctionSpace.Mesh.elementType;
-            if (ismember(elementType, [1, 2]))
+            if (ismember(elementType, [1, 2])) %rectangular triangles or squares
                 Omega = obj.ansatzFunctionSpace.Mesh.Omega;
                 meshSubIntervals = obj.ansatzFunctionSpace.Mesh.subIntervals;
                 nodeDist = (Omega(:,2)-Omega(:,1)) ./ meshSubIntervals';
-                intervalXY = ceil([x; y] ./ nodeDist);
-                for i=find(intervalXY==0)
+                intervalXY = ceil([x; y] ./ nodeDist); %choose the domain related to (x,y)
+                for i=find(intervalXY==0) %case x=0 or y=0
                     intervalXY(i) = intervalXY(i)+1;
                 end
                 domainIndex = (intervalXY(2)-1)*meshSubIntervals(1) + intervalXY(1);
                 if (elementType == 2)
                     u = obj.shapeScalarFunctions(domainIndex).evaluate(x, y);
                 elseif (elementType == 1)
-                    domainIndex = 2*domainIndex;
+                    domainIndex = 2*domainIndex; %two triangles form a square
                     u = obj.shapeScalarFunctions(domainIndex).evaluate(x,y);
-                    if (u == 0)
+                    if (u == 0) %(x,y) not in the right hand triangle
                         u = obj.shapeScalarFunctions(domainIndex-1).evaluate(x,y);
                     end
                 end
@@ -95,28 +110,13 @@ classdef solution < handle
             end
             XYU = cat(3, X, Y, U);
         end
-        
-        %shapeFunction returns assembled shape function of the solution on
-        %a domain (used for efficiency reasons in a posteriori est. and Lp error)
-        function solutionShapeScalarFun = shapeScalarFunction(obj, domain)
-            solutionShapeScalarFun = shapeScalarFunction(domain, polynomial(0));
-            i=1;
-            for basisFun = obj.ansatzFunctionSpace.scalarFunctions(1:end)
-                for shapeScalarFun = basisFun.shapeScalarFunctions(1:end)
-                    if (shapeScalarFun.domain == domain)
-                        solutionShapeScalarFun = solutionShapeScalarFun + shapeScalarFun.scale(obj.u_h(i));
-                    end
-                end
-                i = i+1;
-            end
-        end
-        
+          
         %Calculates error ||u-u_h||_Lp,Omega
         function errLp = errorLp(obj, p, gaussOrder)
             integral = 0;
             for shapeScalarFun = obj.shapeScalarFunctions(1:end)
                 U = u(obj.ansatzFunctionSpace.bvp);
-                difference = @(x,y) abs(U(x, y) - shapeScalarFun.evaluate(x, y))^p;
+                difference = @(x,y) abs(U(x, y) - shapeScalarFun.evaluate(x, y))^p; %|u - u_h|^p
                 integral = integral + gaussQuad(difference, shapeScalarFun.domain.nodes, gaussOrder);                
             end
             errLp = integral^(1/p);

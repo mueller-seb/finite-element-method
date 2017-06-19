@@ -36,14 +36,14 @@ classdef basisFunction < scalarFunction
                         fixPoints(N) = midpoint(fixPoints(N-1), fixPoints(1));
                         
                         j = 2*find(domain.nodes == basisNode)-1;
-                        if (j~=N)
+                        if (j ~= N)
                             k = j+1;
-                        else
+                        elseif (j == N)
                             k = 1;
                         end
-                        if (j~=1)
+                        if (j ~= 1)
                             i = j-1;
-                        else
+                        elseif (j == 1)
                             i = N;
                         end
                         %fun = u(bvp);

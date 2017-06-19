@@ -28,6 +28,10 @@ Computing with polynomials of higher degrees "attaches" additional fix points to
 ### Efficiency
 The code is slightly enlarged due to some functions that improve the efficiency of the algorithm:  
 
-Discrete evaluation of the approx. solution is optimized in terms of choosing the "right" domain for each evaluation point instead of summing up all evaluated basis functions weighted by u_h (the method isn't easily adaptable to arbitrary meshes of course). Therefore the solution class has an array property "shapeScalarFunctions" that assigns each domain of the mesh to its corresponding shape function of the solution. This is also used to increase efficiency of the L2 error calculation and a posteriori estimation.  
+Discrete evaluation of the approx. solution is optimized in terms of choosing the related domain for each evaluation point. Instead of summing up ALL evaluated basis functions weighted by u_h, only bassis functions including shape functions defined on that domain are regarded (the method isn't easily adaptable to arbitrary meshes of course).
+Therefore the solution class has an array property "shapeScalarFunctions" that assigns a shape scalar function to its corresponding domain of the mesh. This is also used to increase efficiency of the L2 error calculation and a posteriori estimation.
+Dicrete evaluation is extremely simple if evaluation points and mesh nodes coincide (solutionOnMeshPoints).
 
-To reach better performance of the calculation of the stiffness matrix A_h, a space of gradients of all basis functions of the ansatz function space is computed in advance. This avoids multiple computations of the same gradients.
+To achieve better performance calculating the stiffness matrix A_h, a space of gradients of all basis functions of the ansatz function space is computed in advance. This avoids multiple computations of the same gradients.
+Additionally, calculation of a(phi_i, phi_j) is restricted to integration over the common domains of both basis functions.
+In the case of rectangular triangles or squares, integration is only executed if basis nodes are neighbours.

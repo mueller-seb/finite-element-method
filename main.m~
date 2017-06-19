@@ -18,18 +18,18 @@ startup;
 %------------BEGIN OF PARAMETRIZATION AREA------------------
 %Choose boundary value problem.
 %1 for BVP #1, 2 for BVP #2.
-bvp = 1; 
+bvp = 2; 
 %
 %[xMin, xMax; yMin, yMax]
 Omega = [0, 1; 0, 1]; %constant, do not change
 %
 %Finite element type.
 %1 for rectangular triangle elements, 2 for square elements, 3 for arbitrary triangle elements
-elementType = 1;
+elementType = 3;
 %
 %Use higher polynomials (from 6 instead of 3 fixpoints on triangles, 8 instead of 4 fixpoints on squares)
 %1 on, 0 off
-higherPolynomials = 0;
+higherPolynomials = 1;
 %
 %#Subintervals of the generated rectangular triangle (1) and square (2) meshes.
 %[x intervals, y intervals]
@@ -46,10 +46,10 @@ gaussOrderA_h = 3; %2 is sufficient
 gaussOrderF_h = 4;
 %Orders of Gaussian quadrature for the a posteriori estimator eta
 %[Order on interior, order on edges]
-gaussOrderEta = [4, 3]; %[#, 2] is sufficient
+gaussOrderEta = [4, 3]; %[4, 2] is sufficient
 %
 %Order of Gaussian quadrature for calculation of the L2 error ||u-u_h||_Omega
-gaussOrderErrorL2 = 3; %2 is sufficient
+gaussOrderErrorL2 = 2;
 %--------END OF PARAMETRIZATION AREA-------------------
 
 tic

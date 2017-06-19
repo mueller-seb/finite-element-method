@@ -15,7 +15,7 @@ xw = GaussPoints(N);
 X = [nodes.x]';
 Y = [nodes.y]';
 
-%2nd Transformation: from standard triangular element Tst to the standard quadrilateral element Rst
+%1st Transformation: from standard quadriliteral element Rst to the standard triangle element Tst
     function value = xi(a, b)
         value = (1+a)*(1-b)/4;
     end
@@ -24,12 +24,12 @@ Y = [nodes.y]';
         value = (1+b)/2;
     end
 
- %Jacobian of the 2nd transformation
+ %Jacobian of the 1st transformation
     function det = J(a, b)
         det = (1-b)/8;
     end
 
-%1st Transformation: from triangle element T to standard triangle element Tst
+%2nd Transformation: from standard triangle element Tst to arbitrary triangle element T
     function sN = shapeN(xi, eta)
         sN = [1-xi-eta, xi, eta];
     end
@@ -44,7 +44,7 @@ Y = [nodes.y]';
         y= sN*Y;
     end
 
-   %Jacobian of the 1st transformation     
+   %Jacobian of the 2nd transformation     
     A_K = abs(X(1)*(Y(2)-Y(3))+X(2)*(Y(3)-Y(1))+X(3)*(Y(1)-Y(2)))/2;
 
 value = 0;
