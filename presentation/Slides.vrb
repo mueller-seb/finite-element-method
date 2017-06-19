@@ -1,0 +1,9 @@
+\frametitle{Evaluation of solution}
+	\framesubtitle{for squares}
+	Class solution assembles a shape function for each domain by summing up weighted corresponding shape functions of all basis functions.\\
+	Evaluation is done by detecting the domain related to $(x,y)$
+	\begin{lstlisting}[basicstyle=\tiny, mathescape]
+	interval = ceil($x/nodeDistance_x; y/nodeDistance_y$)
+	domainIndex = $((interval_y-1) \cdot meshIntervals_y) + interval_x$
+	u = solution.shapeScalarFunctions(domainIndex).evaluate(x,y);
+	\end{lstlisting}
