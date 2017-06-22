@@ -35,7 +35,7 @@
 \end{frame}
 
 \begin{frame}
-\frametitle{Überblick}
+\frametitle{Overview}
 \tableofcontents
 \end{frame}
 
@@ -58,7 +58,7 @@
 
 \begin{frame}[fragile]
 \frametitle{Stiffness matrix}
-\framesubtitle{Calculation for rect. triangles and squares}
+\framesubtitle{Calculation}
 \begin{lstlisting}[basicstyle=\tiny, mathescape]
 for all $\nabla \varphi_i$
   for all $\nabla \varphi_j = \nabla \varphi_1, \ldots, \nabla \varphi_i$
@@ -77,27 +77,6 @@ end
 \end{lstlisting}
 all gradients of basis functions are calculated before
 \end{frame}
-
-\begin{frame}[fragile]
-	\frametitle{Stiffness matrix}
-	\framesubtitle{Calculation for arb. triangles}
-	\begin{lstlisting}[basicstyle=\tiny, mathescape]
-for all $\nabla \varphi_i$
-  for all $\nabla \varphi_j$
-    $a_{ij}$ = 0
-	for all shape functions $s_i$ of $\nabla \varphi_i$
-	  for all shape functions $s_j$ of $\nabla \varphi_j$
-	    if (domain($s_i$) == domain($s_j$))
-	      $a_{ij}$ = $a_{ij}$ + $\int_{d(s_i)} \nabla \varphi_i \cdot \nabla \varphi_j (+ \varphi_i \cdot \varphi_j)dx$;
-	    end
-	  end
-	A(i,j)=$a_{ij}$;
-  end
-end
-\end{lstlisting}
-all gradients of basis functions are calculated before
-\end{frame}
-
 \section{Solution}
 
 \begin{frame}[fragile]
